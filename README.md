@@ -159,3 +159,15 @@ La plateforme applique un **design system unique** : violet royal (`#54258A` / `
 - **Interactions premium** : élévations légères, liserés or discrets, transitions 150–300 ms, états focus clavier visibles, `active` tactiles ; aucun emoji dans les interfaces.
 
 Les fonctionnalités, rôles, données et règles de calcul de la V1 sont intégralement préservés ; la migration des données ajoute simplement le champ `published` sans réinitialisation.
+
+### Splash screen V2 (réception hôtelière)
+
+Le splash screen reproduit et sublime la composition de référence : décor de
+réception hôtelière haut de gamme (`public/splash-hotel.jpg`), logo officiel
+centré avec halo violet et reflet champagne, slogan « L'EXCELLENCE SE
+TRANSMET. » en ivoire, mention « FORMATION • HÔTELLERIE • RESTAURATION » en or
+champagne, bouton « Passer l'intro → » en bas à droite (fermeture immédiate).
+Séquence ≈ 4,3 s (décor → logo → reflet → slogan → mention), une fois par
+session, non bloquante, désactivée si `prefers-reduced-motion`. Teintes
+officielles du splash : violet `#240735` / `#481568`, or `#D4AF37`, champagne
+`#E8CD85`, ivoire `#F8F4EB`.

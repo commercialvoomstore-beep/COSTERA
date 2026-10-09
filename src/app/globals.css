@@ -95,42 +95,160 @@
 }
 
 /* ============================================================
-   SPLASH SCREEN — signature visuelle COSTERA
+   SPLASH SCREEN V2 — réception hôtelière, logo officiel,
+   « L'EXCELLENCE SE TRANSMET. » · « FORMATION • HÔTELLERIE • RESTAURATION »
+   Teintes officielles : violet #240735 / #481568 · or #D4AF37 · champagne #E8CD85 · ivoire #F8F4EB
    ============================================================ */
-.splash {
-  @apply fixed inset-0 z-[100] grid place-items-center overflow-hidden;
+.splash2 {
+  @apply fixed inset-0 z-[100] overflow-hidden;
+  background: #240735;
+}
+.splash2-bg {
+  @apply absolute inset-0 h-full w-full object-cover;
+  animation: s2-bg 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash2-veil {
+  @apply absolute inset-0;
   background:
-    radial-gradient(1100px 520px at 50% -10%, rgb(107 59 181 / 0.5), transparent 62%),
-    radial-gradient(900px 480px at 50% 115%, rgb(200 164 93 / 0.16), transparent 60%),
-    linear-gradient(180deg, #221038 0%, #31135b 55%, #221038 100%);
+    radial-gradient(ellipse at center, rgb(36 7 53 / 0.30) 0%, rgb(36 7 53 / 0.55) 68%, rgb(36 7 53 / 0.78) 100%),
+    linear-gradient(to top, rgb(36 7 53 / 0.66), transparent 42%);
 }
-.splash-logo {
-  animation: splash-logo 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+.splash2-center {
+  @apply absolute inset-0 flex flex-col items-center justify-center px-6 text-center;
 }
-.splash-line {
+.splash2-logo-wrap {
+  position: relative;
+  width: clamp(190px, 42vmin, 330px);
+  height: clamp(190px, 42vmin, 330px);
+}
+.splash2-halo {
+  @apply absolute -inset-10 rounded-full;
+  background: radial-gradient(circle, rgb(72 21 104 / 0.65) 0%, rgb(72 21 104 / 0.28) 45%, transparent 72%);
+  filter: blur(6px);
+  animation: s2-halo 3.4s ease-out both;
+}
+.splash2-logo {
+  @apply relative h-full w-full select-none;
+  filter: drop-shadow(0 18px 42px rgb(36 7 53 / 0.65)) drop-shadow(0 2px 14px rgb(212 175 55 / 0.28));
+  animation: s2-logo 1s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* Reflet champagne traversant ponctuellement le blason */
+.splash2-shimmer {
+  @apply pointer-events-none absolute inset-0;
+  background: linear-gradient(115deg, transparent 32%, rgb(232 205 133 / 0.34) 46%, rgb(248 244 235 / 0.5) 50%, rgb(232 205 133 / 0.34) 54%, transparent 68%);
+  mix-blend-mode: screen;
+  transform: translateX(-130%);
+  animation: s2-shimmer 1.15s 1.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.splash2-slogan {
+  @apply font-display font-semibold text-[#F8F4EB];
+  font-size: clamp(1.05rem, 3.4vmin, 1.9rem);
+  letter-spacing: 0.3em;
+  text-shadow: 0 2px 18px rgb(36 7 53 / 0.8);
+  animation: s2-up 0.8s 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash2-line {
+  @apply mt-4 h-px;
+  width: clamp(140px, 26vmin, 240px);
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
   transform-origin: center;
-  animation: splash-line 0.65s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: s2-line 0.7s 1.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.splash-tagline {
-  animation: splash-soft 0.6s 0.6s ease-out both;
+.splash2-sub {
+  @apply mt-4 font-medium text-[#E8CD85];
+  font-size: clamp(0.62rem, 1.7vmin, 0.85rem);
+  letter-spacing: 0.42em;
+  animation: s2-up 0.8s 1.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.splash.splash-leave {
-  animation: splash-fade 0.35s ease-in both;
+/* Particules dorées discrètes */
+.splash2-particles span {
+  @apply absolute rounded-full;
+  background: #e8cd85;
+  opacity: 0;
+  box-shadow: 0 0 8px 1px rgb(212 175 55 / 0.55);
+  animation: s2-particle 2.6s ease-in-out both;
+}
+/* Bouton « Passer l'intro → » */
+.splash2-skip {
+  @apply absolute bottom-6 right-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[#F8F4EB];
+  background: rgb(72 21 104 / 0.55);
+  border: 1px solid rgb(232 205 133 / 0.55);
+  backdrop-filter: blur(6px);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: s2-up 0.7s 1.9s ease-out both;
+}
+.splash2-skip:hover,
+.splash2-skip:focus-visible {
+  background: rgb(72 21 104 / 0.8);
+  border-color: rgb(232 205 133 / 0.95);
+  box-shadow: 0 0 22px rgb(212 175 55 / 0.35);
+  outline: none;
+}
+.splash2-skip-arrow {
+  @apply inline-block transition-transform duration-200;
+}
+.splash2-skip:hover .splash2-skip-arrow {
+  transform: translateX(4px);
+}
+/* Sortie */
+.splash2-leave {
+  animation: s2-fade 0.42s ease-in both;
 }
 
-@keyframes splash-logo {
+@keyframes s2-bg {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(14px);
-    filter: blur(6px);
+    transform: scale(1.06);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);
+  }
+}
+@keyframes s2-logo {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.94);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
     filter: blur(0);
   }
 }
-@keyframes splash-line {
+@keyframes s2-halo {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+@keyframes s2-shimmer {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(130%);
+  }
+}
+@keyframes s2-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes s2-line {
   from {
     opacity: 0;
     transform: scaleX(0);
@@ -140,17 +258,23 @@
     transform: scaleX(1);
   }
 }
-@keyframes splash-soft {
-  from {
+@keyframes s2-particle {
+  0% {
     opacity: 0;
     transform: translateY(6px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  30% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-26px);
   }
 }
-@keyframes splash-fade {
+@keyframes s2-fade {
   to {
     opacity: 0;
     visibility: hidden;
