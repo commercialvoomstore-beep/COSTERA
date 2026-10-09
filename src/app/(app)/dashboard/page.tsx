@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, ChefHat, Gauge, Percent, Wallet } from 'lucide-react';
 import { BarList, Donut } from '@/components/charts';
 import { DashboardExtras, type DashRecipeRow, type PriceAlertRow } from '@/components/dashboard-extras';
@@ -27,7 +28,10 @@ const CATEGORY_COLORS: Record<string, string> = {
 export default async function DashboardPage() {
   const db = getDB();
   const userId = await getSessionUserId();
-  const user = db.users.find((u) => u.id === userId)!;
+  // Garde défensive : jamais d'écran blanc si la session est invalide ou
+  // l'utilisateur introuvable (le layout applique la même règle).
+  const user = db.users.find((u) => u.id === userId);
+  if (!user) redirect('/login');
   const ingMap = new Map(db.ingredients.map((i) => [i.id, i]));
 
   // Recettes actives avec coûts calculés

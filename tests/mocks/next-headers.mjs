@@ -10,7 +10,8 @@ export async function cookies(){
   const value = uid? encodeSession(uid): undefined;
   return {
     get:(name)=> (name==='costera_session' && value)? {value} : undefined,
-    set(){}, delete(){},
+    set(name, val, opts){ globalThis.__TEST_COOKIE_SET = { name, value: val, opts }; },
+    delete(name){ globalThis.__TEST_COOKIE_DELETED = name; },
   };
 }
 export async function headers(){ return { get:()=>null }; }

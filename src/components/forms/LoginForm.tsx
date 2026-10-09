@@ -18,22 +18,31 @@ export function LoginForm({ demoAccounts }: { demoAccounts: { name: string; emai
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (busy) return;
+    if (busy) return; // anti double-soumission
     setBusy(true);
     setError(null);
-    const res = await loginAction(email, password);
-    setBusy(false);
-    if (!res.ok) {
-      setError(res.error ?? 'Connexion impossible.');
-      return;
+    try {
+      const res = await loginAction(email, password);
+      if (!res.ok) {
+        // Erreur métier réelle (identifiants, validation) : affichée telle quelle.
+        setError(res.error ?? 'Connexion impossible.');
+        setBusy(false);
+        return;
+      }
+      // La navigation RSC re-rend layout + page côté serveur avec le nouveau
+      // cookie : un refresh() supplémentaire créerait une course de flight.
+      router.push('/dashboard');
+    } catch {
+      // Échec réseau / serveur indisponible / 500 : message actionnable,
+      // jamais d'écran blanc (erreur non capturée = page vide).
+      setError('Le serveur n’a pas répondu correctement. Vérifiez votre connexion puis réessayez.');
+      setBusy(false);
     }
-    router.push('/dashboard');
-    router.refresh();
   }
 
   return (
     <div className="space-y-5">
-      <form onSubmit={submit} className="space-y-4" noValidate={false}>
+      <form onSubmit={submit} className="space-y-4" noValidate={false} aria-busy={busy}>
         <div>
           <label htmlFor="login-email" className="auth-label">
             Adresse e-mail

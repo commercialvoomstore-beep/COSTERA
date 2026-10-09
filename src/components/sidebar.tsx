@@ -50,9 +50,15 @@ export function Sidebar({ user, logoSrc }: { user: { name: string; email: string
   const items = NAV.filter((n) => !n.roles || n.roles.includes(user.role));
 
   async function onLogout() {
-    await logoutAction();
+    try {
+      await logoutAction();
+    } catch {
+      // Serveur injoignable : navigation pleine pour réévaluer la session.
+      window.location.href = '/login';
+      return;
+    }
+    // Le push re-rend le segment côté serveur sans cookie : pas de refresh().
     router.push('/login');
-    router.refresh();
   }
 
   return (

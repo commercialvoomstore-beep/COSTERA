@@ -31,14 +31,18 @@ export function SignupForm() {
       return;
     }
     setBusy(true);
-    const res = await registerAction({ firstName, lastName, email, profile, password });
-    setBusy(false);
-    if (!res.ok) {
-      setError(res.error ?? 'Inscription impossible.');
-      return;
+    try {
+      const res = await registerAction({ firstName, lastName, email, profile, password });
+      if (!res.ok) {
+        setError(res.error ?? 'Inscription impossible.');
+        setBusy(false);
+        return;
+      }
+      router.push('/dashboard');
+    } catch {
+      setError('Le serveur n’a pas répondu correctement. Vérifiez votre connexion puis réessayez.');
+      setBusy(false);
     }
-    router.push('/dashboard');
-    router.refresh();
   }
 
   return (
