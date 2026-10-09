@@ -41,7 +41,7 @@ export function MenusClient({ menus, recipes, role }: { menus: MenuCard[]; recip
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {menus.map((m) => (
-            <Link key={m.id} href={`/menus/${m.id}`} className="card group p-6 transition hover:-translate-y-0.5 hover:shadow-pop">
+            <Link key={m.id} href={`/menus/${m.id}`} className="card card-hover group p-6">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-black text-ink group-hover:text-brand-700">{m.name}</h3>

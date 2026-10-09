@@ -143,3 +143,19 @@ Au premier lancement, le dossier `data/` est créé et alimenté avec les donné
 ---
 
 © 2026 **COSTERA** — édité par **VOOMNET FORMATION**. Version fonctionnelle V1.
+
+---
+
+## 11. Identité visuelle premium (harmonisation 2026)
+
+La plateforme applique un **design system unique** : violet royal (`#54258A` / `#6B3BB5`), or royal (`#C8A45D` / `#E4CB91`), blanc ivoire (`#FAF8F3`), gris de texte `#34313B`, séparations `#EAE6EF`, orange gastronomique `#D98245` en accent secondaire uniquement.
+
+- **Logo officiel** : vectorisation fidèle de l'emblème transmis (blason pourpre, toque ivoire, couronne et lauriers or), transparence réelle, servi par `/logo-costera.svg`.
+  - 📌 *Pour utiliser le fichier PNG officiel dès qu'il est disponible : déposez-le simplement sous `public/logo-costera.png` — tous les emplacements basculent automatiquement dessus (priorité au PNG, repli SVG).*
+- **Splash screen** : signature visuelle courte (~1,2 s), non bloquante, jouée une fois par session, désactivée si `prefers-reduced-motion`.
+- **Page d'accueil** : slot vidéo d'arrière-plan propre et remplaçable — déposez `public/video/hero.mp4` ou définissez `NEXT_PUBLIC_HERO_VIDEO` ; repli photographique élégant et respect de la réduction des animations.
+- **« Découvrir les menus »** (`/decouvrir`) : vitrine publique à fond blanc/ivoire, recherche et filtres réels, cartes gastronomiques photographiques, survols premium. **Seuls les menus explicitement publiés** y apparaissent ; tout menu créé reste strictement privé par défaut (case « Publier » dans l'éditeur de menu).
+- **Offres Free / Silver / Gold** : présentation vitrine harmonisée (V1 démo : facturation activée à la mise en production, aucun paiement factice).
+- **Interactions premium** : élévations légères, liserés or discrets, transitions 150–300 ms, états focus clavier visibles, `active` tactiles ; aucun emoji dans les interfaces.
+
+Les fonctionnalités, rôles, données et règles de calcul de la V1 sont intégralement préservés ; la migration des données ajoute simplement le champ `published` sans réinitialisation.

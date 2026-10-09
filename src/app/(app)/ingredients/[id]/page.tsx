@@ -71,7 +71,7 @@ export default async function IngredientDetailPage({ params }: { params: Promise
         </Card>
         <Card className="p-5 sm:col-span-2">
           <p className="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500">Tendance du prix d’achat</p>
-          <Sparkline data={h.map((e) => e.price)} stroke="#ea580c" />
+          <Sparkline data={h.map((e) => e.price)} stroke="#C8A45D" />
           <p className="mt-1 text-xs text-stone-400">
             {h.length} relevé(s) — de {fcfa(Math.min(...h.map((e) => e.price)))} à {fcfa(Math.max(...h.map((e) => e.price)))}
           </p>

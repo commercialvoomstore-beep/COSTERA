@@ -1,10 +1,10 @@
 'use client';
 
-// COSTERA — Mini-graphiques SVG sans dépendance externe
+// COSTERA — Mini-graphiques SVG sans dépendance externe (harmonisés or/violet)
 
-export function Sparkline({ data, height = 56, stroke = '#ea580c', fill = true }: { data: number[]; height?: number; stroke?: string; fill?: boolean }) {
+export function Sparkline({ data, height = 56, stroke = '#C8A45D', fill = true }: { data: number[]; height?: number; stroke?: string; fill?: boolean }) {
   if (data.length < 2) {
-    return <div className="flex h-14 items-center text-xs text-stone-400">Historique insuffisant</div>;
+    return <div className="flex h-14 items-center text-xs text-body/40">Historique insuffisant</div>;
   }
   const width = 240;
   const min = Math.min(...data);
@@ -39,7 +39,7 @@ export function Donut({ segments, centerValue, centerLabel }: { segments: DonutS
   return (
     <div className="relative inline-block">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#f0ece2" strokeWidth={strokeW} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#EFEAF5" strokeWidth={strokeW} />
         {segments.map((s, i) => {
           const frac = s.value / total;
           const dash = frac * c;
@@ -62,8 +62,8 @@ export function Donut({ segments, centerValue, centerLabel }: { segments: DonutS
       </svg>
       <div className="absolute inset-0 grid place-items-center">
         <div className="text-center">
-          <p className="text-xl font-black text-ink">{centerValue}</p>
-          <p className="text-[11px] font-medium uppercase tracking-wide text-stone-400">{centerLabel}</p>
+          <p className="font-display text-lg font-bold text-royal-900">{centerValue}</p>
+          <p className="text-[11px] font-medium uppercase tracking-wide text-body/40">{centerLabel}</p>
         </div>
       </div>
     </div>
@@ -84,15 +84,15 @@ export function BarList({ items }: { items: BarItem[] }) {
       {items.map((item, i) => (
         <li key={i}>
           <div className="mb-1 flex items-baseline justify-between gap-3">
-            <span className="truncate text-sm font-medium text-stone-700">{item.label}</span>
-            <span className="shrink-0 text-sm font-bold text-ink">
+            <span className="truncate text-sm font-medium text-body/75">{item.label}</span>
+            <span className="shrink-0 text-sm font-bold text-royal-900">
               {item.display}
-              {item.sub ? <span className="ml-1 text-xs font-normal text-stone-400">{item.sub}</span> : null}
+              {item.sub ? <span className="ml-1 text-xs font-normal text-body/40">{item.sub}</span> : null}
             </span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-stone-100">
+          <div className="h-2 overflow-hidden rounded-full bg-sand-100">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-600"
+              className="h-full rounded-full bg-gradient-to-r from-royal-600 via-royal-500 to-gold-500"
               style={{ width: `${Math.max(4, (item.value / max) * 100)}%` }}
             />
           </div>

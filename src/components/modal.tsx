@@ -21,7 +21,7 @@ export function Modal({ open, title, onClose, children }: { open: boolean; title
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-royal-950/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white p-6 shadow-pop sm:max-w-lg sm:rounded-2xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-black text-ink">{title}</h2>

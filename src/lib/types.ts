@@ -107,6 +107,11 @@ export interface Menu {
   name: string;
   description?: string;
   sections: MenuSection[];
+  /**
+   * Visibilité sur la vitrine publique « Découvrir les menus ».
+   * Strictement privé par défaut : seul un menu explicitement publié apparaît.
+   */
+  published?: boolean;
   createdAt: string;
   updatedAt: string;
 }

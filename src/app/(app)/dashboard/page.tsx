@@ -12,11 +12,11 @@ import { getDB } from '@/server/db';
 export const metadata: Metadata = { title: 'Tableau de bord' };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Entrées: '#fb923c',
-  Plats: '#ea580c',
-  Accompagnements: '#fbbf24',
-  Desserts: '#16a34a',
-  Boissons: '#0ea5e9',
+  Entrées: '#D98245',
+  Plats: '#6B3BB5',
+  Accompagnements: '#C8A45D',
+  Desserts: '#9d6fd0',
+  Boissons: '#54258A',
 };
 
 export default async function DashboardPage() {
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <PageHeader
-        title={`Bonjour, ${user.name.split(' ')[0]} 👋`}
+        title={`Bonjour, ${user.name.split(' ')[0]}`}
         description={`Voici la situation de ${db.settings.orgName} — objectif food cost : ${target} %.`}
       />
 
@@ -223,7 +223,7 @@ export default async function DashboardPage() {
               })}
             {priced.every((x) => ratioStatus(x.cost.foodCostPct, target) === 'good') ? (
               <p className="rounded-xl bg-forest-50 px-4 py-3 text-sm font-medium text-forest-800">
-                🎉 Toutes les recettes actives respectent l’objectif de {target} %.
+                Toutes les recettes actives respectent l’objectif de {target} %.
               </p>
             ) : null}
           </div>

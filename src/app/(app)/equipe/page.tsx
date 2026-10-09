@@ -38,7 +38,7 @@ export default async function TeamPage() {
                   <tr key={u.id} className="border-b border-stone-50">
                     <td className="td">
                       <div className="flex items-center gap-3">
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-forest-800 text-sm font-bold text-white">
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-b from-gold-300 to-gold-500 text-sm font-bold text-royal-950">
                           {u.name.slice(0, 1)}
                         </span>
                         <div>

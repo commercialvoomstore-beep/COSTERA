@@ -10,6 +10,7 @@ export interface MenuPayload {
   name: string;
   description?: string;
   sections: { title: string; recipeIds: string[] }[];
+  published?: boolean;
 }
 
 export async function saveMenuAction(data: MenuPayload): Promise<{ ok: boolean; id?: string; error?: string }> {
@@ -33,6 +34,7 @@ export async function saveMenuAction(data: MenuPayload): Promise<{ ok: boolean; 
       ...db.menus[idx],
       name: data.name.trim(),
       description: data.description?.trim() || undefined,
+      published: data.published ?? false,
       sections: sections.map((s) => ({
         id: db.menus[idx].sections.find((x) => x.title === s.title)?.id ?? newId('sec'),
         title: s.title.trim(),
@@ -52,6 +54,7 @@ export async function saveMenuAction(data: MenuPayload): Promise<{ ok: boolean; 
     name: data.name.trim(),
     description: data.description?.trim() || undefined,
     sections: sections.map((s) => ({ id: newId('sec'), title: s.title.trim(), recipeIds: [...new Set(s.recipeIds)] })),
+    published: data.published ?? false, // privé par défaut
     createdAt: nowISO(),
     updatedAt: nowISO(),
   };

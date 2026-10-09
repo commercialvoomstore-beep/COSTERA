@@ -18,6 +18,7 @@ export interface MenuFormInitial {
   name: string;
   description?: string;
   sections: { id: string; title: string; recipeIds: string[] }[];
+  published?: boolean;
 }
 
 interface SectionState {
@@ -32,6 +33,7 @@ export function MenuForm({ recipes, initial, onClose }: { recipes: MenuFormRecip
   const router = useRouter();
   const [name, setName] = useState(initial?.name ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
+  const [published, setPublished] = useState(initial?.published ?? false);
   const [sections, setSections] = useState<SectionState[]>(
     initial?.sections.length
       ? initial.sections.map((s) => ({ key: s.id, title: s.title, recipeIds: [...s.recipeIds] }))
@@ -49,6 +51,7 @@ export function MenuForm({ recipes, initial, onClose }: { recipes: MenuFormRecip
       name,
       description: description || undefined,
       sections: sections.map((s) => ({ title: s.title, recipeIds: s.recipeIds })),
+      published,
     });
     setBusy(false);
     if (!res.ok) {
@@ -69,6 +72,13 @@ export function MenuForm({ recipes, initial, onClose }: { recipes: MenuFormRecip
       <Field label="Description (facultatif)">
         <input className="input" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Formule midi, menu de réception…" />
       </Field>
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-linec bg-ivory px-4 py-3">
+        <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="mt-0.5 h-4 w-4 accent-royal-600" />
+        <span>
+          <span className="block text-sm font-semibold text-body">Publier sur la vitrine « Découvrir les menus »</span>
+          <span className="block text-xs text-body/55">Par défaut un menu reste strictement privé. La publication est réservée aux contenus que vous souhaitez montrer au public.</span>
+        </span>
+      </label>
 
       <div className="space-y-4">
         {sections.map((sec, idx) => (

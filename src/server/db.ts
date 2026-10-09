@@ -30,13 +30,24 @@ export function getDB(): DB {
       writeFileSync(file(key), JSON.stringify(seed[key], null, 2), 'utf8');
     });
   }
+  const menus = JSON.parse(readFileSync(file('menus'), 'utf8')) as Menu[];
+  // Migration douce (jamais de réinitialisation) : les menus de démonstration
+  // historiques sont visibles sur la vitrine ; tout autre menu reste privé.
+  let migrated = false;
+  for (const m of menus) {
+    if (m.published === undefined && (m.id === 'menu-dejeuner' || m.id === 'menu-gala')) {
+      m.published = true;
+      migrated = true;
+    }
+  }
   cache = {
     users: JSON.parse(readFileSync(file('users'), 'utf8')) as User[],
     ingredients: JSON.parse(readFileSync(file('ingredients'), 'utf8')) as Ingredient[],
     recipes: JSON.parse(readFileSync(file('recipes'), 'utf8')) as Recipe[],
-    menus: JSON.parse(readFileSync(file('menus'), 'utf8')) as Menu[],
+    menus,
     settings: JSON.parse(readFileSync(file('settings'), 'utf8')) as Settings,
   };
+  if (migrated) writeFileSync(file('menus'), JSON.stringify(menus, null, 2), 'utf8');
   return cache;
 }
 

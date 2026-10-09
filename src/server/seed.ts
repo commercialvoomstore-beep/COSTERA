@@ -305,6 +305,7 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
       id: 'menu-dejeuner',
       name: 'Déjeuner du Maquis',
       description: 'Formule midi aux saveurs d’Abidjan.',
+      published: true,
       sections: [
         { id: 'sec-entrees', title: 'Entrées', recipeIds: ['rec-salade-avocat'] },
         { id: 'sec-plats', title: 'Plats', recipeIds: ['rec-garba', 'rec-attieke-poisson', 'rec-kedjenou'] },
@@ -318,6 +319,7 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
       id: 'menu-gala',
       name: 'Soirée Gastronomique Ivoirienne',
       description: 'Menu de réception mettant à l’honneur les grands classiques.',
+      published: true,
       sections: [
         { id: 'sec-plats-gala', title: 'Plats', recipeIds: ['rec-sauce-graine', 'rec-tchep', 'rec-poulet-braise'] },
         { id: 'sec-desserts-gala', title: 'Desserts', recipeIds: ['rec-degue'] },

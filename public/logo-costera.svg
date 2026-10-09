@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="COSTERA">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3E3B8"/>
+      <stop offset="0.45" stop-color="#C8A45D"/>
+      <stop offset="1" stop-color="#8A6A2F"/>
+    </linearGradient>
+    <linearGradient id="goldSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4CB91"/>
+      <stop offset="1" stop-color="#B08A43"/>
+    </linearGradient>
+    <radialGradient id="purple" cx="0.5" cy="0.35" r="0.9">
+      <stop offset="0" stop-color="#6B3BB5"/>
+      <stop offset="0.55" stop-color="#54258A"/>
+      <stop offset="1" stop-color="#31135B"/>
+    </radialGradient>
+    <linearGradient id="ivory" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E6DCC4"/>
+    </linearGradient>
+    <g id="leaf">
+      <ellipse rx="24" ry="8.5" fill="url(#goldSoft)"/>
+    </g>
+    <g id="branch">
+      <path d="M262 486 C168 470 96 402 88 288 C86 262 88 240 92 220" fill="none" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+      <use href="#leaf" transform="translate(112 430) rotate(38)"/>
+      <use href="#leaf" transform="translate(94 396) rotate(52)"/>
+      <use href="#leaf" transform="translate(84 356) rotate(66)"/>
+      <use href="#leaf" transform="translate(80 314) rotate(80)"/>
+      <use href="#leaf" transform="translate(84 272) rotate(94)"/>
+      <use href="#leaf" transform="translate(92 234) rotate(106)"/>
+      <use href="#leaf" transform="translate(126 452) rotate(20)"/>
+      <use href="#leaf" transform="translate(164 468) rotate(8)"/>
+    </g>
+    <g id="fleur">
+      <path d="M0 -22 C7 -12 11 -4 11 4 C11 12 5 17 0 17 C-5 17 -11 12 -11 4 C-11 -4 -7 -12 0 -22 Z" fill="url(#goldSoft)"/>
+      <path d="M-6 0 C-16 -8 -24 -3 -24 5 C-24 12 -17 16 -9 13 C-4 11 -3 6 -6 0 Z" fill="url(#goldSoft)"/>
+      <path d="M6 0 C16 -8 24 -3 24 5 C24 12 17 16 9 13 C4 11 3 6 6 0 Z" fill="url(#goldSoft)"/>
+      <rect x="-12" y="12" width="24" height="5" rx="2.5" fill="url(#gold)"/>
+    </g>
+  </defs>
+
+  <!-- Lauriers -->
+  <use href="#branch"/>
+  <use href="#branch" transform="translate(512 0) scale(-1 1)"/>
+
+  <!-- Blason : bordure or puis champ pourpre -->
+  <path d="M256 92 L404 128 V266 C404 372 336 434 256 458 C176 434 108 372 108 266 V128 Z" fill="url(#gold)"/>
+  <path d="M256 106 L390 139 V264 C390 360 328 418 256 441 C184 418 122 360 122 264 V139 Z" fill="url(#purple)"/>
+  <path d="M256 118 L378 148 V262 C378 350 322 404 256 426 C190 404 134 350 134 262 V148 Z" fill="none" stroke="#E4CB91" stroke-width="2" opacity="0.65"/>
+
+  <!-- Ornements intérieurs hauts -->
+  <path d="M146 152 C160 146 172 148 180 158 C170 158 160 162 154 170 C150 162 148 156 146 152 Z" fill="url(#goldSoft)" opacity="0.9"/>
+  <path d="M366 152 C352 146 340 148 332 158 C342 158 352 162 358 170 C362 162 364 156 366 152 Z" fill="url(#goldSoft)" opacity="0.9"/>
+
+  <!-- Toque ivoire -->
+  <g>
+    <circle cx="256" cy="52" r="30" fill="url(#ivory)"/>
+    <circle cx="224" cy="62" r="24" fill="url(#ivory)"/>
+    <circle cx="288" cy="62" r="24" fill="url(#ivory)"/>
+    <circle cx="200" cy="80" r="17" fill="url(#ivory)"/>
+    <circle cx="312" cy="80" r="17" fill="url(#ivory)"/>
+    <ellipse cx="256" cy="86" rx="52" ry="15" fill="url(#ivory)"/>
+    <path d="M212 92 Q256 102 300 92" stroke="#D8CCB0" stroke-width="2.5" fill="none" opacity="0.55"/>
+  </g>
+  <!-- Couronne -->
+  <g>
+    <path d="M202 96 H310 L316 128 H196 Z" fill="url(#gold)"/>
+    <path d="M202 96 H310 L312 106 H200 Z" fill="#F3E3B8" opacity="0.8"/>
+    <use href="#fleur" transform="translate(256 84) scale(0.62)"/>
+    <use href="#fleur" transform="translate(216 92) scale(0.4)"/>
+    <use href="#fleur" transform="translate(296 92) scale(0.4)"/>
+    <circle cx="232" cy="116" r="3.4" fill="#54258A"/>
+    <circle cx="256" cy="116" r="3.4" fill="#54258A"/>
+    <circle cx="280" cy="116" r="3.4" fill="#54258A"/>
+    <use href="#fleur" transform="translate(256 116) scale(0.34)"/>
+  </g>
+
+  <!-- Monogramme C + attributs culinaires -->
+  <g>
+    <text x="147" y="250" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-weight="700" fill="url(#gold)" stroke="#6E5220" stroke-width="1.2">C</text>
+    <g stroke="url(#goldSoft)" stroke-width="3.4" stroke-linecap="round" fill="none">
+      <path d="M138 236 L162 212"/>
+      <path d="M162 236 L138 212"/>
+      <path d="M138 212 l-2 -8 M143 210 l0 -9 M148 212 l2 -8"/>
+    </g>
+    <ellipse cx="163" cy="209" rx="5" ry="7" fill="url(#goldSoft)" transform="rotate(45 163 209)"/>
+    <g fill="url(#ivory)">
+      <circle cx="150" cy="196" r="7"/>
+      <circle cx="141" cy="200" r="5.4"/>
+      <circle cx="159" cy="200" r="5.4"/>
+      <rect x="141" y="200" width="18" height="6" rx="3"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="188" y="250" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="700" letter-spacing="1.5" fill="url(#gold)" stroke="#6E5220" stroke-width="0.8">OSTERA</text>
+
+  <!-- Vapeur -->
+  <g stroke="url(#goldSoft)" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M236 306 C232 296 240 290 236 280"/>
+    <path d="M256 302 C252 290 260 284 256 272"/>
+    <path d="M276 306 C272 296 280 290 276 280"/>
+  </g>
+
+  <!-- Cloche -->
+  <circle cx="256" cy="316" r="6" fill="url(#goldSoft)"/>
+  <path d="M194 362 C194 330 222 318 256 318 C290 318 318 330 318 362 Z" fill="url(#gold)"/>
+  <path d="M214 330 C224 322 240 320 256 320" stroke="#F7EBCB" stroke-width="3" fill="none" opacity="0.8" stroke-linecap="round"/>
+  <rect x="186" y="360" width="140" height="8" rx="4" fill="url(#gold)"/>
+
+  <!-- Livre ouvert -->
+  <path d="M196 372 C222 362 246 362 256 370 C266 362 290 362 316 372 L316 384 C290 375 266 375 256 382 C246 375 222 375 196 384 Z" fill="url(#ivory)"/>
+  <path d="M200 386 C224 378 246 378 256 384 C266 378 288 378 312 386 L312 392 C288 385 266 385 256 390 C246 385 224 385 200 392 Z" fill="#D9CDB2"/>
+
+  <!-- Ornement bas -->
+  <use href="#fleur" transform="translate(256 414) scale(0.8)"/>
+  <path d="M212 404 C224 412 238 414 248 410 M300 404 C288 412 274 414 264 410" stroke="url(#goldSoft)" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

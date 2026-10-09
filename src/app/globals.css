@@ -2,47 +2,168 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   COSTERA — DESIGN SYSTEM UNIQUE
+   Violet royal · Or royal · Blanc ivoire · Orange gastronomique
+   ============================================================ */
+
 @layer base {
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-sand-50 text-ink antialiased;
+    @apply bg-ivory text-body antialiased;
   }
   ::selection {
-    @apply bg-brand-500/20 text-brand-900;
+    @apply bg-royal-600/15 text-royal-800;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
+  /* ---------- Surfaces ---------- */
   .card {
-    @apply rounded-2xl border border-stone-200/80 bg-white shadow-card;
+    @apply rounded-2xl border border-linec bg-white shadow-card;
+  }
+  /* Survol premium : élévation légère + liseré or discret */
+  .card-hover {
+    @apply transition-all duration-200 ease-premium hover:-translate-y-1 hover:border-gold-400/70 hover:shadow-pop active:translate-y-0;
+  }
+
+  /* ---------- Champs ---------- */
+  .label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-body/60;
   }
   .input {
-    @apply w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm text-ink shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 disabled:cursor-not-allowed disabled:bg-stone-100;
+    @apply w-full rounded-xl border border-linec bg-white px-3 py-2 text-sm text-body shadow-sm outline-none transition duration-200 placeholder:text-body/35 focus:border-royal-500 focus:ring-2 focus:ring-royal-500/20 disabled:cursor-not-allowed disabled:bg-ivory-100;
   }
-  .label {
-    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-stone-500;
-  }
+
+  /* ---------- Boutons : états normal / survol / actif / focus / désactivé ---------- */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-premium focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-55 active:scale-[0.98];
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-sm hover:bg-brand-700;
+    @apply btn bg-gradient-to-b from-royal-600 to-royal-700 text-white shadow-[0_6px_16px_-6px_rgb(84_37_138/0.5)] hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgb(84_37_138/0.55),0_0_0_1px_rgb(200_164_93/0.55)] hover:brightness-[1.06] active:translate-y-0;
   }
-  .btn-dark {
-    @apply btn bg-ink text-white hover:bg-forest-950;
+  .btn-gold {
+    @apply btn border border-gold-500/60 bg-gradient-to-b from-gold-100 to-gold-200 text-royal-900 hover:-translate-y-0.5 hover:border-gold-500 hover:shadow-gold active:translate-y-0;
   }
   .btn-ghost {
-    @apply btn border border-stone-300 bg-white text-stone-700 hover:border-stone-400 hover:bg-stone-50;
+    @apply btn border border-linec bg-white text-body/80 hover:-translate-y-0.5 hover:border-gold-500/70 hover:text-royal-800 hover:shadow-card active:translate-y-0;
   }
   .btn-danger {
-    @apply btn border border-red-200 bg-red-50 text-red-700 hover:bg-red-100;
+    @apply btn border border-red-200 bg-red-50 text-red-700 hover:border-red-300 hover:bg-red-100;
   }
+  .btn-on-dark {
+    @apply btn border border-white/20 bg-white/5 text-ivory hover:border-gold-400/60 hover:bg-white/10;
+  }
+
+  /* ---------- Tableaux ---------- */
   .th {
-    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-stone-500;
+    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-body/50;
   }
   .td {
     @apply px-4 py-3 text-sm;
   }
+  .row-hover {
+    @apply transition-colors duration-150 hover:bg-royal-50/60;
+  }
+
+  /* ---------- Navigation ---------- */
+  .nav-link {
+    @apply relative text-sm font-medium text-body/70 transition-colors duration-200 hover:text-royal-700 focus-visible:text-royal-700 focus-visible:outline-none;
+  }
+  .nav-link::after {
+    content: '';
+    @apply pointer-events-none absolute -bottom-1 left-0 h-px w-0 bg-gold-500 transition-all duration-300 ease-premium;
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    @apply w-full;
+  }
+}
+
+/* ============================================================
+   SPLASH SCREEN — signature visuelle COSTERA
+   ============================================================ */
+.splash {
+  @apply fixed inset-0 z-[100] grid place-items-center overflow-hidden;
+  background:
+    radial-gradient(1100px 520px at 50% -10%, rgb(107 59 181 / 0.5), transparent 62%),
+    radial-gradient(900px 480px at 50% 115%, rgb(200 164 93 / 0.16), transparent 60%),
+    linear-gradient(180deg, #221038 0%, #31135b 55%, #221038 100%);
+}
+.splash-logo {
+  animation: splash-logo 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash-line {
+  transform-origin: center;
+  animation: splash-line 0.65s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.splash-tagline {
+  animation: splash-soft 0.6s 0.6s ease-out both;
+}
+.splash.splash-leave {
+  animation: splash-fade 0.35s ease-in both;
+}
+
+@keyframes splash-logo {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes splash-line {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+@keyframes splash-soft {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes splash-fade {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Zoom photographique maîtrisé (cadre stable) */
+.img-zoom {
+  @apply overflow-hidden;
+}
+.img-zoom img {
+  @apply h-full w-full object-cover transition-transform duration-500 ease-premium;
+}
+.img-zoom:hover img {
+  transform: scale(1.05);
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { SplashScreen } from '@/components/splash-screen';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,7 +16,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/logo-costera.svg" />
+      </head>
+      <body>
+        <SplashScreen />
+        {children}
+      </body>
     </html>
   );
 }
