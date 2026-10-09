@@ -3,12 +3,10 @@
 // COSTERA — Splash screen V3 INBLOQUABLE.
 // Le markup est rendu CÔTÉ SERVEUR : même sans aucun JavaScript, le cycle de
 // vie complet (apparition → tenue → disparition) est piloté par le CSS pur
-// (s2-kill : invisible + non bloquant après 7 s). JavaScript ne fait que
-// raffiner : sortie à 4,3 s, bouton/clic « Passer l'intro », une fois par
-// session, désactivé si prefers-reduced-motion.
+// (s2-kill : invisible + non bloquant après 7 s). JavaScript raffine :
+// sortie à ~4,4 s, bouton/clic « Passer l'intro », désactivé uniquement si
+// prefers-reduced-motion. Se joue À CHAQUE lancement/rechargement du site.
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-const FLAG = 'costera_splash_done';
 
 const PARTICLES = [
   { left: '18%', top: '30%', delay: '0.9s', size: 3 },
@@ -27,43 +25,23 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
   const [logoFailed, setLogoFailed] = useState(false);
   const leavingRef = useRef(false);
 
-  const remember = () => {
-    try {
-      sessionStorage.setItem(FLAG, '1');
-    } catch {
-      /* stockage indisponible */
-    }
-  };
-
   const leave = useCallback((fadeMs: number) => {
     if (leavingRef.current) return;
     leavingRef.current = true;
     setLeaving(true);
-    window.setTimeout(() => {
-      setGone(true);
-      remember();
-    }, fadeMs);
+    window.setTimeout(() => setGone(true), fadeMs);
   }, []);
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem(FLAG) === '1';
-    } catch {
-      /* ignore */
-    }
     const reduced =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (seen || reduced) {
-      setGone(true); // retour de session : aucun splash
+    if (reduced) {
+      setGone(true); // accessibilité : pas d'animation si le système la refuse
       return;
     }
     const auto = window.setTimeout(() => leave(450), 4400);
-    const hard = window.setTimeout(() => {
-      setGone(true);
-      remember();
-    }, 6500);
+    const hard = window.setTimeout(() => setGone(true), 6500);
     return () => {
       window.clearTimeout(auto);
       window.clearTimeout(hard);
