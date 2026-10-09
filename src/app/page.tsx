@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ArrowRight,
-  BookOpen,
   Building2,
   CalendarCheck,
   ChefHat,
@@ -13,49 +12,14 @@ import {
   GraduationCap,
   LineChart,
   Percent,
-  Salad,
   Scale,
-  ShieldCheck,
   Sparkles,
-  TrendingUp,
   UtensilsCrossed,
 } from 'lucide-react';
 import { HeroMedia } from '@/components/hero-media';
+import { FeaturesGrid } from '@/components/features/FeaturesGrid';
 import { Logo } from '@/components/logo';
 import { HERO_IMAGE } from '@/lib/dish-images';
-
-const FEATURES = [
-  {
-    icon: Percent,
-    title: 'Food cost & coût matière',
-    text: 'Chaque fiche technique calcule automatiquement son coût matière, son ratio matière sur vente, sa marge et son coefficient multiplicateur.',
-  },
-  {
-    icon: BookOpen,
-    title: 'Fiches techniques structurées',
-    text: 'Ingrédients, quantités, unités, taux de perte, progression en étapes et rendement : vos recettes deviennent des documents de gestion.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Suivi des prix d’achat',
-    text: 'Historique de prix par ingrédient, fournisseurs, variations et alertes : le marché ne vous surprend plus jamais.',
-  },
-  {
-    icon: UtensilsCrossed,
-    title: 'Menus rentables',
-    text: 'Composez vos menus par sections, publiez-les sur la vitrine et visualisez la rentabilité plat par plat.',
-  },
-  {
-    icon: Salad,
-    title: 'Pensé pour la cuisine ivoirienne',
-    text: 'Attiéké, garba, kedjenou, sauce graine, placali… avec les unités locales : botte, cube, boîte, pièce, et le franc CFA comme devise native.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Rôles & droits d’accès',
-    text: 'Administrateur, gestionnaire, chef de cuisine : chacun agit dans son périmètre, la direction garde la main sur les paramètres.',
-  },
-];
 
 const FORMULAS = [
   { icon: Scale, name: 'Coût matière', formula: 'Σ (Quantité × Prix unitaire) × (1 + perte)' },
@@ -197,17 +161,7 @@ export default function LandingPage() {
             Tout ce qu’il faut pour piloter votre cuisine
           </h2>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="card card-hover group p-7">
-              <span className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-royal-50 text-royal-700 ring-1 ring-inset ring-royal-600/15 transition-colors duration-300 group-hover:bg-royal-700 group-hover:text-gold-300">
-                <f.icon className="h-5 w-5" />
-              </span>
-              <h3 className="font-display text-lg font-bold text-body">{f.title}</h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-body/60">{f.text}</p>
-            </div>
-          ))}
-        </div>
+        <FeaturesGrid />
       </section>
 
       {/* À propos : mission, à qui s'adresse COSTERA, les 14 modules */}

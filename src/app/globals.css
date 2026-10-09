@@ -854,3 +854,312 @@
   .plan-card-gold { animation: none; }
   .padlock-shake, .padlock-open, .toast { animation: none; }
 }
+
+/* ============================================================
+   FONCTIONNALITÉS — SURVOL SPECTACULAIRE (FeatureCard / FeaturesGrid)
+   État normal : carte blanche identique à l'existant.
+   Au survol / focus clavier / 1er appui tactile (~0,6 s,
+   cubic-bezier(0.16,1,0.3,1)) : image HD révélée + voile violet nuit,
+   texte clair, icône dorée glassmorphism, élévation −8 px, bordure or,
+   ligne dorée, lien « Découvrir », reflet diagonal, lueur curseur,
+   inclinaison 3D ±6° — et atténuation des cartes voisines.
+   ============================================================ */
+
+.fc-cell {
+  position: relative;
+  border-radius: 1rem;
+  will-change: transform, opacity;
+}
+
+/* ---- Apparition à l'entrée dans l'écran (JS uniquement) ---- */
+.fc-grid[data-js='on'] .fc-cell {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s ease var(--fc-d, 0ms),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--fc-d, 0ms);
+}
+.fc-grid[data-js='on'] .fc-cell.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Atténuation des autres cartes (repli sans effet si :has() absent) ---- */
+.fc-grid:has(.fc-cell:hover) .fc-cell.is-visible:not(:hover),
+.fc-grid:has(.fc-link:focus-visible) .fc-cell.is-visible:not(:focus-within) {
+  opacity: 0.75;
+  transform: scale(0.98);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition-delay: 0ms;
+}
+
+/* ---- Couches ---- */
+.fc-link {
+  display: block;
+  height: 100%;
+  border-radius: 1rem;
+  outline: none;
+}
+.fc-lift {
+  height: 100%;
+  border-radius: 1rem;
+  perspective: 1000px;
+  will-change: transform;
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fc-tilt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid #eae6ef;
+  background: #ffffff;
+  box-shadow: 0 1px 2px 0 rgb(52 49 59 / 0.04), 0 2px 6px -1px rgb(52 49 59 / 0.07);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* ---- État « actif » : survol, focus clavier, 1er appui tactile ---- */
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-lift {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(45, 27, 105, 0.3);
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-tilt {
+  border-color: #d4a94a;
+  box-shadow: 0 0 0 1px rgb(212 169 74 / 0.35);
+}
+.fc-link:focus-visible .fc-tilt {
+  outline: 2px solid #d4a94a;
+  outline-offset: 3px;
+}
+
+/* ---- 1. Image de fond (fond violet de secours pendant le chargement) ---- */
+.fc-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(140deg, #391c5b 0%, #54258a 55%, #6b3bb5 100%);
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-bg { opacity: 1; }
+.fc-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.15);
+  opacity: 0;
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+.fc-img.is-loaded { opacity: 1; }
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-img { transform: scale(1); }
+
+/* ---- 2. Voile violet nuit (lisibilité AA du texte clair) ---- */
+.fc-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(26, 15, 61, 0.55), rgba(26, 15, 61, 0.92));
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-veil { opacity: 1; }
+
+/* ---- Lueur dorée circulaire suivant le curseur (desktop) ---- */
+.fc-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    240px circle at var(--x, 50%) var(--y, 50%),
+    rgba(226, 194, 117, 0.32),
+    rgba(226, 194, 117, 0) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  mix-blend-mode: screen;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-glow { opacity: 1; }
+
+/* ---- 6. Reflet lumineux diagonal (une fois par survol, 0,8 s) ---- */
+.fc-shine {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 55%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 244, 214, 0) 0%,
+    rgba(255, 244, 214, 0.28) 42%,
+    rgba(226, 194, 117, 0.5) 50%,
+    rgba(255, 244, 214, 0.28) 58%,
+    rgba(255, 244, 214, 0) 100%
+  );
+  transform: translateX(-180%) skewX(-18deg);
+  mix-blend-mode: screen;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-shine {
+  animation: fc-shine-sweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1 both;
+}
+@keyframes fc-shine-sweep {
+  from { transform: translateX(-180%) skewX(-18deg); }
+  to { transform: translateX(320%) skewX(-18deg); }
+}
+
+/* ---- Fond « papier » blanc (bandeau image 120 px sur écrans tactiles) ---- */
+.fc-paper { display: none; }
+
+/* ---- 3. Contenu : icône, titre, texte, ligne dorée, lien ---- */
+.fc-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+  padding: 1.75rem;
+}
+.fc-icon {
+  display: grid;
+  place-items: center;
+  height: 3rem;
+  width: 3rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0.75rem;
+  background: #f6f2fb;
+  color: #54258a;
+  box-shadow: inset 0 0 0 1px rgb(84 37 138 / 0.15);
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-icon {
+  background: rgba(255, 255, 255, 0.14);
+  color: #e2c275;
+  box-shadow: inset 0 0 0 1px rgb(226 194 117 / 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.fc-title {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: #34313b;
+  transition: color 0.5s ease;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-title { color: #ffffff; }
+.fc-text {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
+  color: rgb(52 49 59 / 0.6);
+  transition: color 0.5s ease;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-text { color: #f3ebdd; }
+
+/* ---- 5. Révélation : ligne dorée + lien « Découvrir → » ---- */
+.fc-line {
+  display: block;
+  margin-top: 1.25rem;
+  height: 2px;
+  width: 5rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #d4a94a, #e2c275);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-line { transform: scaleX(1); }
+.fc-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e2c275;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.5s ease 0.18s,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.18s;
+}
+.fc-cell:is(:hover, .is-active, :focus-within) .fc-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Écrans tactiles : bandeau image permanent de 120 px ---- */
+@media (hover: none) {
+  .fc-bg {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 120px;
+    opacity: 1;
+    transition:
+      height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.4s ease;
+  }
+  .fc-img { transform: none; }
+  .fc-veil { opacity: 0.2; }
+  .fc-paper {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 120px;
+    bottom: 0;
+    z-index: 1;
+    background: #ffffff;
+    transition: opacity 0.5s ease;
+  }
+  .fc-content { padding: calc(120px + 1.25rem) 1.75rem 1.75rem; }
+  .fc-glow,
+  .fc-shine { display: none; }
+  .fc-cell.is-active .fc-bg { height: 100%; }
+  .fc-cell.is-active .fc-veil { opacity: 1; }
+  .fc-cell.is-active .fc-paper { opacity: 0; }
+}
+
+/* ---- prefers-reduced-motion : simple fondu, sans zoom/tilt/reflet/élévation ---- */
+@media (prefers-reduced-motion: reduce) {
+  .fc-grid[data-js='on'] .fc-cell {
+    transform: none;
+    transition: opacity 0.4s ease var(--fc-d, 0ms);
+  }
+  .fc-grid:has(.fc-cell:hover) .fc-cell.is-visible:not(:hover),
+  .fc-grid:has(.fc-link:focus-visible) .fc-cell.is-visible:not(:focus-within) {
+    transform: none;
+    transition: opacity 0.3s ease;
+  }
+  .fc-cell:is(:hover, .is-active, :focus-within) .fc-lift { transform: none; }
+  .fc-tilt { transform: none !important; }
+  .fc-img,
+  .fc-cell:is(:hover, .is-active, :focus-within) .fc-img {
+    transform: none !important;
+    transition: opacity 0.4s ease !important;
+  }
+  .fc-shine { animation: none !important; }
+  .fc-glow { display: none; }
+}
