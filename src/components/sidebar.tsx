@@ -31,7 +31,7 @@ const NAV: NavItem[] = [
   { href: '/parametres', label: 'Paramètres', icon: Settings, roles: ['admin'] },
 ];
 
-export function Sidebar({ user, logoKind }: { user: { name: string; email: string; role: Role }; logoKind: 'png' | 'svg' }) {
+export function Sidebar({ user, logoSrc }: { user: { name: string; email: string; role: Role }; logoSrc: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const items = NAV.filter((n) => !n.roles || n.roles.includes(user.role));
@@ -48,7 +48,7 @@ export function Sidebar({ user, logoKind }: { user: { name: string; email: strin
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-gradient-to-b from-royal-950 via-royal-900 to-royal-950 text-royal-100 lg:flex">
         <div className="border-b border-white/10 px-5 py-5">
           <Link href="/dashboard" aria-label="Tableau de bord COSTERA">
-            <BrandLogoClient kind={logoKind} size={52} onDark />
+            <BrandLogoClient src={logoSrc} fallback="/logo-costera.svg" size={52} onDark />
           </Link>
           <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-400/90">Food cost &amp; coût matière</p>
         </div>
@@ -94,7 +94,7 @@ export function Sidebar({ user, logoKind }: { user: { name: string; email: strin
       <header className="sticky top-0 z-30 border-b border-white/10 bg-royal-950 lg:hidden">
         <div className="flex items-center justify-between px-4 py-2.5">
           <Link href="/dashboard" aria-label="Tableau de bord COSTERA">
-            <BrandLogoClient kind={logoKind} size={40} onDark />
+            <BrandLogoClient src={logoSrc} fallback="/logo-costera.svg" size={40} onDark />
           </Link>
           <button onClick={onLogout} className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-royal-100/80 transition hover:bg-white/5 hover:text-white">
             <LogOut className="h-4 w-4" />

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { officialLogoSrc } from '@/components/logo';
+import { officialLogoDisplaySrc } from '@/components/logo';
 import { SplashScreen } from '@/components/splash-screen';
 import './globals.css';
 
@@ -18,10 +18,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <head>
-        <link rel="icon" type="image/svg+xml" href="/logo-costera.svg" />
+        <link
+          rel="icon"
+          type={officialLogoDisplaySrc().endsWith('.svg') ? 'image/svg+xml' : 'image/png'}
+          href={officialLogoDisplaySrc()}
+        />
       </head>
       <body>
-        <SplashScreen logoSrc={officialLogoSrc() === 'png' ? '/logo-costera.png' : '/logo-costera.svg'} />
+        <SplashScreen logoSrc={officialLogoDisplaySrc()} />
         {children}
       </body>
     </html>

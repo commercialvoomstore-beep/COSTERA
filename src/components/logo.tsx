@@ -16,9 +16,31 @@ export function officialLogoSrc(): 'png' | 'svg' {
   }
 }
 
+/**
+ * Source d'AFFICHAGE du logo : dérivé transparent (détourage technique,
+ * fichier séparé, l'original officiel n'est JAMAIS modifié) > PNG officiel >
+ * vectorisation SVG de secours.
+ */
+export function officialLogoDisplaySrc(): string {
+  const pub = (f: string) => path.join(process.cwd(), 'public', f);
+  try {
+    if (existsSync(pub('logo-costera-transparent.png'))) return '/logo-costera-transparent.png';
+    if (existsSync(pub('logo-costera.png'))) return '/logo-costera.png';
+  } catch {
+    /* ignore */
+  }
+  return '/logo-costera.svg';
+}
+
 export function Logo({ size = 44, withWordmark = false, onDark = false, className = '' }: { size?: number; withWordmark?: boolean; onDark?: boolean; className?: string }) {
-  const kind = officialLogoSrc();
   return (
-    <BrandLogoClient kind={kind} size={size} withWordmark={withWordmark} onDark={onDark} className={className} />
+    <BrandLogoClient
+      src={officialLogoDisplaySrc()}
+      fallback="/logo-costera.svg"
+      size={size}
+      withWordmark={withWordmark}
+      onDark={onDark}
+      className={className}
+    />
   );
 }
