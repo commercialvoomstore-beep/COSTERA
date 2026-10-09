@@ -1,22 +1,16 @@
 // COSTERA — Formatage (devise FCFA / XOF, dates, pourcentages)
 
-const xofFmt = new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'XOF',
-  maximumFractionDigits: 0,
-});
-
 const numFmt = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 });
 const numFmt1 = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 });
 
-/** Montant en FCFA, ex. « 1 500 F CFA ». */
-export function fcfa(n: number): string {
-  return xofFmt.format(Math.round(Number.isFinite(n) ? n : 0));
-}
-
-/** Montant FCFA sans le sigle, ex. « 1 500 ». */
+/** Montant FCFA sans le sigle, ex. « 1 500 » (séparateur de milliers : espace fine). */
 export function fcfaNum(n: number): string {
   return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(Math.round(Number.isFinite(n) ? n : 0));
+}
+
+/** Montant en FCFA, ex. « 10 000 FCFA » (séparateur de milliers, sans décimales). */
+export function fcfa(n: number): string {
+  return `${fcfaNum(n)}\u00a0FCFA`;
 }
 
 /** Pourcentage, ex. « 34,5 % ». */

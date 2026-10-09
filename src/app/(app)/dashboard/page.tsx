@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, ChefHat, Gauge, Percent, Wallet } from 'lucide-react';
 import { BarList, Donut } from '@/components/charts';
+import { DashboardExtras, type DashRecipeRow, type PriceAlertRow } from '@/components/dashboard-extras';
 import { Badge, Card, CardHeader, PageHeader } from '@/components/ui';
+import { priceIncreaseAlert } from '@/lib/costing-engine';
 import { fmtDate, fcfa, pct } from '@/lib/format';
 import { costOfRecipe, priceDeltaPct, ratioStatus } from '@/lib/foodcost';
 import { can } from '@/lib/roles';
@@ -64,6 +66,38 @@ export default async function DashboardPage() {
     .filter((x): x is NonNullable<typeof x> => x !== null)
     .sort((a, b) => b.last.date.localeCompare(a.last.date))
     .slice(0, 7);
+
+  // Analyses : lignes plats (marges réelles) + ventes hebdomadaires simulées (démo),
+  // et alertes d'achat : hausse du dernier prix enregistré supérieure à 5 %.
+  const dashRecipes = activeRecipes.map((r) => ({ recipe: r, cost: costOfRecipe(r, ingMap) }));
+  const extraRows: DashRecipeRow[] = dashRecipes.map(({ recipe, cost }, i) => ({
+    id: recipe.id,
+    name: recipe.name,
+    category: recipe.category,
+    perPortion: cost.perPortion,
+    salePrice: recipe.salePrice,
+    margin: cost.margin,
+    foodCostPct: cost.foodCostPct,
+    defaultSold: 12 + ((i * 13) % 49),
+  }));
+  const priceAlerts: PriceAlertRow[] = db.ingredients
+    .map((ing) => {
+      if (ing.history.length < 2) return null;
+      const prev = ing.history[ing.history.length - 2];
+      const last = ing.history[ing.history.length - 1];
+      if (!priceIncreaseAlert(prev.price, last.price)) return null;
+      return {
+        ingredientId: ing.id,
+        name: ing.name,
+        previous: prev.price,
+        current: last.price,
+        deltaPct: ((last.price - prev.price) / prev.price) * 100,
+        usedBy: dashRecipes
+          .filter(({ recipe }) => recipe.lines.some((l) => l.ingredientId === ing.id))
+          .map(({ recipe }) => recipe.name),
+      };
+    })
+    .filter((x): x is PriceAlertRow => x !== null);
 
   return (
     <div>
@@ -229,6 +263,9 @@ export default async function DashboardPage() {
           </div>
         </Card>
       </div>
+
+      {/* Analyses : KPI carte, ingénierie de menu, alertes prix */}
+      <DashboardExtras recipes={extraRows} alerts={priceAlerts} targetPct={target} />
     </div>
   );
 }

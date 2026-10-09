@@ -341,28 +341,39 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
   // Enrichissements vitrine publique : nutrition (pour 100 g), grammes par
   // unité de base, temps de cuisson, chef auteur et description des plats.
   // ------------------------------------------------------------------
-  const NUT: Record<string, [number, number, number, number]> = {
-    'ing-attieke': [340, 3, 76, 1], 'ing-riz': [350, 7, 78, 1], 'ing-igname': [118, 1.5, 28, 0.2],
-    'ing-plantain': [122, 1.3, 32, 0.4], 'ing-manioc': [160, 1.4, 38, 0.3], 'ing-millet': [378, 11, 73, 4.3],
-    'ing-gari': [380, 2.5, 91, 1], 'ing-poulet': [165, 19.5, 0, 9.5], 'ing-boeuf': [250, 26, 0, 15],
-    'ing-carpe': [127, 18, 0, 6], 'ing-poisson-fume': [140, 26, 0, 3.5], 'ing-thon': [132, 28, 0, 1.3],
-    'ing-crevettes': [240, 40, 2, 3], 'ing-oeufs': [143, 12.5, 1.5, 9.5], 'ing-lait-concentre': [324, 8, 55, 9],
-    'ing-yaourt': [61, 3.5, 4.7, 3.2], 'ing-tomate': [18, 0.9, 3.9, 0.2], 'ing-tomate-concentree': [82, 4, 19, 0.5],
-    'ing-oignon': [40, 1.1, 9.3, 0.1], 'ing-cive': [32, 1.8, 7, 0.2], 'ing-ail': [149, 6.4, 33, 0.5],
-    'ing-gingembre': [80, 1.8, 18, 0.8], 'ing-piment': [40, 1.9, 9, 0.2], 'ing-aubergine': [25, 1, 6, 0.2],
-    'ing-gombo': [33, 1.9, 7.5, 0.2], 'ing-avocat': [160, 2, 8.5, 14.7], 'ing-citron': [29, 1.1, 9, 0.3],
-    'ing-palme': [280, 2, 12, 25], 'ing-huile-rouge': [884, 0, 0, 100], 'ing-huile': [884, 0, 0, 100],
-    'ing-arachide': [590, 25, 20, 50], 'ing-cube': [255, 8, 45, 5], 'ing-sel': [0, 0, 0, 0],
-    'ing-sucre': [387, 0, 100, 0], 'ing-bissap': [35, 0.4, 7.4, 0.4],
+  const NUT: Record<string, number[]> = {
+    // [kcal, prot, gluc, lip, fibres, fer, calcium, potassium, vitA, vitC] /100 g
+    'ing-attieke': [340,3,76,1,3,1.5,20,120,0,0], 'ing-riz': [350,7,78,1,1.3,0.8,10,115,0,0],
+    'ing-igname': [118,1.5,28,0.2,4,0.5,17,816,0,12], 'ing-plantain': [122,1.3,32,0.4,2.3,0.6,3,490,112,18],
+    'ing-manioc': [160,1.4,38,0.3,1.8,0.3,16,270,0,20], 'ing-millet': [378,11,73,4.3,8.5,3,8,195,0,0],
+    'ing-gari': [380,2.5,91,1,2,1,30,150,0,0], 'ing-poulet': [165,19.5,0,9.5,0,1,12,220,45,0],
+    'ing-boeuf': [250,26,0,15,0,2.6,18,318,0,0], 'ing-carpe': [127,18,0,6,0,1.2,40,410,15,1],
+    'ing-poisson-fume': [140,26,0,3.5,0,1.8,60,450,15,1], 'ing-thon': [132,28,0,1.3,0,1.3,16,320,18,0],
+    'ing-crevettes': [240,40,2,3,0,4,150,500,0,0], 'ing-oeufs': [143,12.5,1.5,9.5,0,1.8,56,138,160,0],
+    'ing-lait-concentre': [324,8,55,9,0,0.3,287,371,97,2], 'ing-yaourt': [61,3.5,4.7,3.2,0,0.1,121,155,27,1],
+    'ing-tomate': [18,0.9,3.9,0.2,1.2,0.3,10,237,42,14], 'ing-tomate-concentree': [82,4,19,0.5,4,2,40,1010,30,23],
+    'ing-oignon': [40,1.1,9.3,0.1,1.7,0.2,23,146,0,7], 'ing-cive': [32,1.8,7,0.2,2.5,1,50,250,100,30],
+    'ing-ail': [149,6.4,33,0.5,2.1,1.7,181,401,0,31], 'ing-gingembre': [80,1.8,18,0.8,2,0.6,16,415,0,5],
+    'ing-piment': [40,1.9,9,0.2,1.5,1,20,322,48,144], 'ing-aubergine': [25,1,6,0.2,3,0.3,20,230,1,5],
+    'ing-gombo': [33,1.9,7.5,0.2,3.2,0.6,82,299,36,23], 'ing-avocat': [160,2,8.5,14.7,6.7,0.6,12,485,7,10],
+    'ing-citron': [29,1.1,9,0.3,2.8,0.6,26,138,1,53], 'ing-palme': [280,2,12,25,8,3,40,350,100,5],
+    'ing-huile-rouge': [884,0,0,100,0,0,0,0,1000,0], 'ing-huile': [884,0,0,100,0,0,0,0,0,0],
+    'ing-arachide': [590,25,20,50,6,1.7,50,650,0,0], 'ing-cube': [255,8,45,5,2,3,50,300,0,2],
+    'ing-sel': [0,0,0,0,0,0,20,0,0,0], 'ing-sucre': [387,0,100,0,0,0,1,2,0,0], 'ing-bissap': [35,0.4,7.4,0.4,1.5,1.5,40,210,3,30],
   };
-  const BASE_G: Record<string, number> = {
-    'ing-oeufs': 50, 'ing-lait-concentre': 397, 'ing-yaourt': 1030, 'ing-tomate-concentree': 400,
-    'ing-cive': 100, 'ing-cube': 10, 'ing-huile-rouge': 920, 'ing-huile': 920,
+  const ALLERG: Record<string, string[]> = {
+    'ing-arachide': ['arachides'], 'ing-crevettes': ['crustacés', 'sulfites'],
+    'ing-carpe': ['poisson'], 'ing-poisson-fume': ['poisson'], 'ing-thon': ['poisson'],
+    'ing-oeufs': ['œufs'], 'ing-lait-concentre': ['lait'], 'ing-yaourt': ['lait'],
+    'ing-huile': ['soja'], 'ing-cube': ['céleri'], 'ing-tomate-concentree': ['sulfites'],
   };
   for (const ing of ingredients) {
-    const n = NUT[ing.id] ?? [100, 2, 10, 2];
-    ing.nutrition = { kcal: n[0], protein: n[1], carbs: n[2], fat: n[3] };
-    if (BASE_G[ing.id]) ing.baseUnitGrams = BASE_G[ing.id];
+    const n = NUT[ing.id] ?? [100, 2, 10, 2, 1, 0.5, 20, 200, 0, 0];
+    ing.nutrition = {
+      kcal: n[0], protein: n[1], carbs: n[2], fat: n[3], fiber: n[4],
+      iron: n[5], calcium: n[6], potassium: n[7], vitA: n[8], vitC: n[9],
+    };
+    if (ALLERG[ing.id]) ing.allergens = ALLERG[ing.id];
   }
   const META: Record<string, [number, string, string]> = {
     'rec-salade-avocat': [15, 'Chef Mariam Traoré', 'Avocat crémeux, tomates fraîches et oignon rouge relevés d’un filet de citron vert et d’huile douce. Une entrée fraîche et lumineuse, dressée minute comme au comptoir d’un grand hôtel.'],

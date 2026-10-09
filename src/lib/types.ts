@@ -57,7 +57,20 @@ export interface Ingredient {
   /** Historique de prix trié par date croissante. */
   history: PriceEntry[];
   /** Valeurs nutritionnelles pour 100 g d'ingrédient. */
-  nutrition?: { kcal: number; protein: number; carbs: number; fat: number };
+  nutrition?: {
+    kcal: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber?: number;
+    iron?: number; // mg
+    calcium?: number; // mg
+    potassium?: number; // mg
+    vitA?: number; // µg
+    vitC?: number; // mg
+  };
+  /** Allergènes réglementaires présents dans l'ingrédient. */
+  allergens?: string[];
   /** Grammes par unité de base (pièce, botte, boîte, litre…) si différent de 1000. */
   baseUnitGrams?: number;
   createdAt: string;

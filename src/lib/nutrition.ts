@@ -8,6 +8,8 @@ export interface NutritionTotal {
   protein: number;
   carbs: number;
   fat: number;
+  /** Fibres par portion (0 si non renseignées). */
+  fiber: number;
   /** Grammes totaux d'ingrédients par portion. */
   gramsPerPortion: number;
 }
@@ -26,7 +28,7 @@ function lineGrams(qty: number, unitId: string, ing: Ingredient): number {
 
 /** Nutrition totale de la recette, ramenée À LA PORTION. */
 export function computeNutrition(recipe: Recipe, ingredientById: Map<string, Ingredient>): NutritionTotal {
-  const total = { kcal: 0, protein: 0, carbs: 0, fat: 0, grams: 0 };
+  const total = { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, grams: 0 };
   for (const line of recipe.lines) {
     const ing = ingredientById.get(line.ingredientId);
     if (!ing?.nutrition) continue;
@@ -36,6 +38,7 @@ export function computeNutrition(recipe: Recipe, ingredientById: Map<string, Ing
     total.protein += ing.nutrition.protein * f;
     total.carbs += ing.nutrition.carbs * f;
     total.fat += ing.nutrition.fat * f;
+    total.fiber += (ing.nutrition.fiber ?? 0) * f;
     total.grams += grams;
   }
   const portions = Math.max(1, recipe.portions);
@@ -44,6 +47,7 @@ export function computeNutrition(recipe: Recipe, ingredientById: Map<string, Ing
     protein: Math.round(total.protein / portions),
     carbs: Math.round(total.carbs / portions),
     fat: Math.round(total.fat / portions),
+    fiber: Math.round(total.fiber / portions),
     gramsPerPortion: Math.round(total.grams / portions),
   };
 }

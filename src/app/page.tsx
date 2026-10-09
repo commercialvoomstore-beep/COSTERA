@@ -5,9 +5,12 @@ import Link from 'next/link';
 import {
   ArrowRight,
   BookOpen,
+  Building2,
+  CalendarCheck,
   ChefHat,
   Crown,
   Gem,
+  GraduationCap,
   LineChart,
   Percent,
   Salad,
@@ -204,6 +207,93 @@ export default function LandingPage() {
               <p className="mt-2.5 text-sm leading-relaxed text-body/60">{f.text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* À propos : mission, à qui s'adresse COSTERA, les 14 modules */}
+      <section id="a-propos" className="border-y border-linec bg-white">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-24 sm:px-6 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-600">À propos</p>
+            <h2 className="mt-3 font-display text-3xl font-bold leading-snug tracking-tight text-royal-900 sm:text-4xl">
+              L'application de gestion née pour la restauration ivoirienne
+            </h2>
+            <p className="mt-6 leading-relaxed text-body/70">
+              COSTERA — <em>Côte d'Ivoire Restauration</em> — est née d'un constat simple : les cuisines
+              d'Abidjan, des maquis aux palaces, regorgent de talent… mais pilotent trop souvent leurs coûts
+              à l'instinct. Notre mission : donner à chaque équipe, de la street food aux hôtels 5 étoiles,
+              les mêmes outils de gestion qu'une grande brigade — <strong className="font-semibold text-royal-800">fiches techniques, food cost,
+              rendements, marges, inventaires</strong> — calculés en temps réel, en francs CFA, sans tableur ni formation d'ingénieur.
+            </p>
+            <p className="mt-4 leading-relaxed text-body/70">
+              Conçue à Abidjan, pensée pour les produits de nos marchés, COSTERA est aussi un outil
+              d'enseignement : chaque formule est expliquée, pour que les écoles hôtelières forment les
+              gestionnaires de demain.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="/login" className="auth-btn-violet">Créer mon compte gratuit</a>
+              <a href="/decouvrir" className="auth-btn-gold">Découvrir les menus</a>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-[2rem] shadow-pop">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/hero-3-800.jpg"
+              alt="Chef ivoirien dressant un plat gastronomique en cuisine"
+              loading="lazy"
+              className="aspect-[4/5] w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-royal-950/60 via-transparent to-transparent" />
+            <p className="absolute bottom-5 left-6 right-6 text-sm font-medium text-ivory/95">
+              « Du marché d'Adjamé à l'assiette, chaque franc compte. »
+            </p>
+          </div>
+        </div>
+
+        {/* À qui s'adresse COSTERA ? */}
+        <div className="border-t border-linec bg-gradient-to-br from-royal-50 via-ivory to-gold-50/60">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+            <h3 className="font-display text-center text-2xl font-bold text-royal-900">À qui s'adresse COSTERA ?</h3>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { t: 'Restaurants & maquis', d: 'Fiches techniques et marges plat par plat.', Icon: UtensilsCrossed },
+                { t: 'Hôtels & resorts', d: 'Room service, banquets et petits-déjeuners sous contrôle.', Icon: Building2 },
+                { t: 'Traiteurs & événementiel', d: 'Devis précis et coûts de revient par prestation.', Icon: CalendarCheck },
+                { t: 'Écoles hôtelières', d: 'Mode pédagogique avec formules expliquées pas à pas.', Icon: GraduationCap },
+              ].map(({ t, d, Icon }) => (
+                <div key={t} className="card group p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-gold-300 hover:shadow-pop">
+                  <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-royal-50 text-royal-700 ring-1 ring-inset ring-royal-600/15 transition-colors duration-300 group-hover:bg-royal-700 group-hover:text-gold-300">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h4 className="mt-4 font-display text-base font-bold text-royal-900">{t}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-body/60">{d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 text-center text-sm text-body/60">
+              Et pour tous les profils : chefs et cheffes de cuisine, gérants, contrôleurs de gestion F&amp;B, barmans,
+              pâtissiers et étudiants en hôtellerie-restauration.
+            </p>
+          </div>
+        </div>
+
+        {/* Les 14 modules */}
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+          <h3 className="font-display text-center text-xl font-bold text-royal-900">
+            14 modules pour maîtriser vos coûts de A à Z
+          </h3>
+          <div className="mt-6 flex flex-wrap justify-center gap-2.5">
+            {[
+              'Fiches techniques', 'Calcul des coûts', 'Rendement & pertes', 'Food cost', 'Prix de vente',
+              'Marge & rentabilité', 'Coût de revient', 'Gestion des pertes', 'Fiches nutritionnelles',
+              'Allergènes', 'Ingénierie de menu', 'Achats & fournisseurs', 'Inventaire & consommation',
+              'Rapports & PDF',
+            ].map((m) => (
+              <span key={m} className="rounded-full border border-gold-300/70 bg-gold-50/70 px-4 py-1.5 text-[13px] font-semibold text-gold-800">
+                {m}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 

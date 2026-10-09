@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   Carrot,
   ChefHat,
+  FileText,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -27,6 +28,7 @@ const NAV: NavItem[] = [
   { href: '/ingredients', label: 'Ingrédients', icon: Carrot },
   { href: '/recettes', label: 'Recettes', icon: ChefHat },
   { href: '/menus', label: 'Menus', icon: UtensilsCrossed },
+  { href: '/rapports', label: 'Rapports', icon: FileText },
   { href: '/equipe', label: 'Équipe', icon: Users, roles: ['admin'] },
   { href: '/parametres', label: 'Paramètres', icon: Settings, roles: ['admin'] },
 ];

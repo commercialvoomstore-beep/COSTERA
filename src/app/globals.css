@@ -534,3 +534,137 @@
     animation-delay: 0s;
   }
 }
+
+/* ============================================================
+   MODAL « DÉCOUVRIR LES MENUS » — plein écran premium
+   ============================================================ */
+.menu-backdrop {
+  background: rgb(34 16 56 / 0.55);
+  backdrop-filter: blur(10px);
+  animation: menu-bg-in 0.35s ease both;
+}
+@keyframes menu-bg-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Mobile : bottom-sheet pleine hauteur ; desktop : carte centrée */
+.menu-panel {
+  animation: menu-sheet-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes menu-sheet-up {
+  from {
+    opacity: 0.4;
+    transform: translateY(6%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.kenburns {
+  animation: hero-zoom-a 14s ease-out both;
+}
+.menu-tab {
+  @apply relative shrink-0 px-4 py-3 text-sm font-semibold text-royal-500 transition-colors duration-300;
+}
+.menu-tab::after {
+  content: "";
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 0;
+  height: 2.5px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #b8892b, #e2c275);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.menu-tab:hover {
+  color: #5b2d9e;
+}
+.menu-tab-on {
+  color: #391c5b;
+}
+.menu-tab-on::after {
+  transform: scaleX(1);
+}
+/* Séparateur pointillé nom … prix, comme une vraie carte */
+.menu-dots {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  border-bottom: 2px dotted rgb(57 28 91 / 0.25);
+  transform: translateY(-4px);
+}
+/* Cascade des plats (stagger 60 ms via animation-delay inline) */
+.menu-dish {
+  animation: dish-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes dish-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Chiffres alignés dans les colonnes de prix */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-panel,
+  .menu-backdrop,
+  .menu-dish,
+  .kenburns {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   IMPRESSION / PDF — fiches, rapports et rapports mensuels (A4)
+   ============================================================ */
+@media print {
+  aside,
+  nav,
+  header,
+  footer,
+  button,
+  .print-hidden,
+  .mobile-nav {
+    display: none !important;
+  }
+  body,
+  main {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #d6d3d1 !important;
+    break-inside: avoid;
+  }
+  .print-only {
+    display: block !important;
+  }
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+}
+.print-only {
+  display: none;
+}
+
+/* Carte vitrine (menus) */
+.dish-card {
+  @apply bg-white;
+}
+/* Curseur du simulateur de prix */
+.sim-range {
+  @apply h-2 cursor-pointer appearance-none rounded-full bg-royal-100 accent-[#5B2D9E];
+}

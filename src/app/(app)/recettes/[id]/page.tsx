@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AlertTriangle, Pencil } from 'lucide-react';
+import { CostingLab } from '@/components/costing-lab';
 import { DeleteRecipeButton } from '@/components/delete-buttons';
 import { PrintButton } from '@/components/print-button';
 import { Badge, Card, CardHeader, LinkButton, StatusBadge } from '@/components/ui';
@@ -201,6 +202,23 @@ export default async function RecipeDetailPage({ params }: { params: Promise<{ i
           </Card>
         </div>
       </div>
+
+      {/* Laboratoire de calcul : jauge, simulateur, comparateur, CSV */}
+      <CostingLab
+        perPortion={cost.perPortion}
+        salePrice={recipe.salePrice}
+        targetPct={target}
+        recipeName={recipe.name}
+        lines={recipe.lines.map((l) => {
+          const ing = ingMap.get(l.ingredientId);
+          const lc = cost.lines.find((x) => x.lineId === l.id);
+          return {
+            name: ing?.name ?? '—',
+            qtyLabel: `${num(l.qty)} ${unitAbbr(l.unitId)}`,
+            cost: lc?.cost ?? 0,
+          };
+        })}
+      />
     </div>
   );
 }
