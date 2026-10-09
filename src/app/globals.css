@@ -140,19 +140,19 @@
 }
 .splash2-logo-wrap {
   position: relative;
-  width: clamp(190px, 42vmin, 330px);
-  height: clamp(190px, 42vmin, 330px);
+  width: clamp(220px, 52vmin, 420px);
+  height: clamp(220px, 52vmin, 420px);
 }
 .splash2-halo {
   @apply absolute -inset-10 rounded-full;
   background: radial-gradient(circle, rgb(72 21 104 / 0.65) 0%, rgb(72 21 104 / 0.28) 45%, transparent 72%);
   filter: blur(6px);
-  animation: s2-halo 3.4s ease-out both;
+  animation: s2-halo 3.4s 0.45s ease-out both;
 }
 .splash2-logo {
   @apply relative h-full w-full select-none;
   filter: drop-shadow(0 18px 42px rgb(36 7 53 / 0.65)) drop-shadow(0 2px 14px rgb(212 175 55 / 0.28));
-  animation: s2-logo 1s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: s2-logo 1.05s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 /* Reflet champagne traversant ponctuellement le blason */
 .splash2-shimmer {
@@ -160,27 +160,34 @@
   background: linear-gradient(115deg, transparent 32%, rgb(232 205 133 / 0.34) 46%, rgb(248 244 235 / 0.5) 50%, rgb(232 205 133 / 0.34) 54%, transparent 68%);
   mix-blend-mode: screen;
   transform: translateX(-130%);
-  animation: s2-shimmer 1.15s 1.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: s2-shimmer 1.15s 1.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .splash2-slogan {
-  @apply font-display font-semibold text-[#F8F4EB];
-  font-size: clamp(1.05rem, 3.4vmin, 1.9rem);
-  letter-spacing: 0.3em;
-  text-shadow: 0 2px 18px rgb(36 7 53 / 0.8);
-  animation: s2-up 0.8s 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @apply font-display text-[#F8F4EB];
+  font-weight: 500;
+  font-size: clamp(1.15rem, 3.8vmin, 2.1rem);
+  letter-spacing: 0.32em;
+  text-shadow:
+    0 2px 22px rgb(36 7 53 / 0.85),
+    0 0 34px rgb(212 175 55 / 0.18);
+  animation: s2-up 0.85s 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .splash2-line {
   @apply mt-4 h-px;
   width: clamp(140px, 26vmin, 240px);
   background: linear-gradient(to right, transparent, #d4af37, transparent);
   transform-origin: center;
-  animation: s2-line 0.7s 1.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: s2-line 0.7s 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+/* Mention élégante : serif italique champagne, lisible et raffinée */
 .splash2-sub {
-  @apply mt-4 font-medium text-[#E8CD85];
-  font-size: clamp(0.62rem, 1.7vmin, 0.85rem);
-  letter-spacing: 0.42em;
-  animation: s2-up 0.8s 1.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  @apply mt-4 font-display italic text-[#E8CD85];
+  font-size: clamp(0.8rem, 2.3vmin, 1.08rem);
+  letter-spacing: 0.3em;
+  text-shadow:
+    0 1px 14px rgb(36 7 53 / 0.9),
+    0 0 22px rgb(212 175 55 / 0.3);
+  animation: s2-up 0.85s 1.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 /* Particules dorées discrètes */
 .splash2-particles span {
@@ -190,20 +197,22 @@
   box-shadow: 0 0 8px 1px rgb(212 175 55 / 0.55);
   animation: s2-particle 2.6s ease-in-out both;
 }
-/* Bouton « Passer l'intro → » */
+/* Bouton « Passer l'intro → » : discret mais identifiable */
 .splash2-skip {
-  @apply absolute bottom-6 right-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[#F8F4EB];
-  background: rgb(72 21 104 / 0.55);
-  border: 1px solid rgb(232 205 133 / 0.55);
+  @apply absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[#F8F4EB];
+  opacity: 0.66;
+  background: rgb(36 7 53 / 0.45);
+  border: 1px solid rgb(232 205 133 / 0.38);
   backdrop-filter: blur(6px);
-  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  animation: s2-up 0.7s 1.9s ease-out both;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: s2-up 0.7s 2.1s ease-out both;
 }
 .splash2-skip:hover,
 .splash2-skip:focus-visible {
-  background: rgb(72 21 104 / 0.8);
-  border-color: rgb(232 205 133 / 0.95);
-  box-shadow: 0 0 22px rgb(212 175 55 / 0.35);
+  opacity: 1;
+  background: rgb(72 21 104 / 0.72);
+  border-color: rgb(232 205 133 / 0.85);
+  box-shadow: 0 0 20px rgb(212 175 55 / 0.3);
   outline: none;
 }
 .splash2-skip-arrow {

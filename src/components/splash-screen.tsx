@@ -59,7 +59,7 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
       setGone(true); // retour de session : aucun splash
       return;
     }
-    const auto = window.setTimeout(() => leave(450), 4300);
+    const auto = window.setTimeout(() => leave(450), 4400);
     const hard = window.setTimeout(() => {
       setGone(true);
       remember();
