@@ -1,9 +1,9 @@
 'use client';
 
 // COSTERA — Splash screen V2 : réception hôtelière, logo officiel centré,
-// slogan « L'EXCELLENCE SE TRANSMET. », mention « FORMATION • HÔTELLERIE • RESTAURATION »,
-// bouton « Passer l'intro → ». Durée ≈ 4,3 s, non bloquant, une fois par session,
-// désactivé si prefers-reduced-motion.
+// « L'EXCELLENCE SE TRANSMET. » · « FORMATION • HÔTELLERIE • RESTAURATION »,
+// bouton « Passer l'intro → ». ≈ 4,3 s puis sortie automatique GARANTIE,
+// une fois par session, désactivé si prefers-reduced-motion.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const FLAG = 'costera_splash_done';
@@ -20,24 +20,26 @@ const PARTICLES = [
 export function SplashScreen({ logoSrc }: { logoSrc: string }) {
   const [phase, setPhase] = useState<'hidden' | 'show' | 'leave' | 'done'>('hidden');
   const [logoFailed, setLogoFailed] = useState(false);
-  const timers = useRef<number[]>([]);
+  const leaving = useRef(false);
 
-  const finish = useCallback((leaveMs: number) => {
+  /** Déclenche la sortie (appelé par le timer auto ET par le bouton). */
+  const leave = useCallback((fadeMs: number) => {
+    if (leaving.current) return;
+    leaving.current = true;
     setPhase('leave');
-    timers.current.push(
-      window.setTimeout(() => {
-        setPhase('done');
-        try {
-          sessionStorage.setItem(FLAG, '1');
-        } catch {
-          /* stockage indisponible */
-        }
-      }, leaveMs)
-    );
+    window.setTimeout(() => {
+      setPhase('done');
+      try {
+        sessionStorage.setItem(FLAG, '1');
+      } catch {
+        /* stockage indisponible */
+      }
+    }, fadeMs);
   }, []);
 
   useEffect(() => {
-    if (phase !== 'hidden') return;
+    // Une seule exécution au montage : les timers NE SONT PAS nettoyés
+    // par les changements de phase (sinon la sortie auto saute).
     let seen = false;
     try {
       seen = sessionStorage.getItem(FLAG) === '1';
@@ -50,10 +52,10 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
       return;
     }
     setPhase('show');
-    // Séquence : décor → logo → reflet doré → slogan → mention → stabilisation.
-    timers.current.push(window.setTimeout(() => finish(450), 4300));
-    return () => timers.current.forEach((t) => window.clearTimeout(t));
-  }, [phase, finish]);
+    const auto = window.setTimeout(() => leave(450), 4300);
+    return () => window.clearTimeout(auto); // uniquement au démontage réel
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (phase === 'done' || phase === 'hidden') return null;
 
@@ -94,7 +96,7 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
       </div>
 
       {/* Passer l'intro */}
-      <button type="button" className="splash2-skip" onClick={() => finish(380)}>
+      <button type="button" className="splash2-skip" onClick={() => leave(380)}>
         Passer l’intro
         <span className="splash2-skip-arrow" aria-hidden="true">→</span>
       </button>
