@@ -13,32 +13,32 @@ const SLIDES = [
   {
     img: '/images/hero-1.jpg',
     slogan: 'L’excellence culinaire, pilotée au franc près.',
-    sub: 'Fiches techniques, prix d’achat, menus rentables.',
+    sub: 'Le feu, le geste précis, les coûts maîtrisés.',
   },
   {
     img: '/images/hero-2.jpg',
-    slogan: 'Maîtrisez vos coûts, sublimez vos saveurs.',
-    sub: 'La gestion gastronomique signée COSTERA.',
+    slogan: 'L’art de recevoir se transmet.',
+    sub: 'Hôtellerie • Restauration • Excellence.',
   },
   {
     img: '/images/hero-3.jpg',
-    slogan: 'Du marché d’Abidjan à l’assiette, chaque franc compte.',
-    sub: 'Suivi des prix d’achat en temps réel, en FCFA.',
+    slogan: 'Maîtrisez vos coûts, sublimez vos saveurs.',
+    sub: 'Chaque sauce, chaque franc, au compte.',
   },
   {
     img: '/images/hero-4.jpg',
-    slogan: 'La cuisine ivoirienne mérite une gestion d’exception.',
-    sub: 'Garba, attiéké, kedjenou : rentables et sublimes.',
+    slogan: 'Du marché d’Abidjan à l’assiette, chaque franc compte.',
+    sub: 'Le service d’exception, cœur ivoirien.',
   },
   {
     img: '/images/hero-5.jpg',
-    slogan: 'L’excellence se transmet.',
-    sub: 'Formation • Hôtellerie • Restauration.',
+    slogan: 'La cuisine ivoirienne mérite une gestion d’exception.',
+    sub: 'Bar, salle, cuisine : pilotez tout.',
   },
   {
     img: '/images/hero-6.jpg',
-    slogan: 'Des ingrédients nobles, des décisions précises.',
-    sub: 'Chaque ingrédient compte, chaque franc aussi.',
+    slogan: 'Des suites impeccables, des comptes impeccables.',
+    sub: 'L’excellence hôtelière, au franc près.',
   },
 ];
 
