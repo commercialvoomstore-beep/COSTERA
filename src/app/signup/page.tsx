@@ -2,20 +2,16 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { AuthShowcase } from '@/components/auth-showcase';
-import { LoginForm } from '@/components/forms/LoginForm';
+import { SignupForm } from '@/components/forms/SignupForm';
 import { Logo, officialLogoDisplaySrc } from '@/components/logo';
 import { getSessionUserId } from '@/lib/auth';
 import { getDB } from '@/server/db';
 
-export const metadata: Metadata = { title: 'Connexion' };
+export const metadata: Metadata = { title: 'Inscription' };
 
-export default async function LoginPage() {
+export default async function SignupPage() {
   const userId = await getSessionUserId();
   if (userId && getDB().users.some((u) => u.id === userId)) redirect('/dashboard');
-
-  const demoAccounts = getDB()
-    .users.map((u) => ({ name: u.name, email: u.email, role: u.role }))
-    .sort((a, b) => (a.role === 'admin' ? -1 : b.role === 'admin' ? 1 : 0));
 
   return (
     <main className="min-h-screen bg-[#FAF8F5] lg:grid lg:grid-cols-[58fr_42fr]">
@@ -29,17 +25,15 @@ export default async function LoginPage() {
               <Logo size={54} />
             </span>
           </div>
-          <h1 className="font-display text-center text-2xl font-semibold text-[#1A1A2E]">
-            Connexion à COSTERA
-          </h1>
+          <h1 className="font-display text-center text-2xl font-semibold text-[#1A1A2E]">S’inscrire</h1>
           <p className="mb-7 mt-1.5 text-center text-sm text-stone-500">
-            Accédez à votre espace de gestion culinaire.
+            Rejoignez COSTERA et pilotez votre cuisine au franc près.
           </p>
-          <LoginForm demoAccounts={demoAccounts} />
+          <SignupForm />
           <p className="mt-6 text-center text-sm text-stone-500">
-            Pas encore de compte ?{' '}
-            <Link href="/signup" className="font-semibold text-royal-700 underline-offset-4 transition-colors hover:text-gold-700 hover:underline">
-              S’inscrire
+            Déjà inscrit ?{' '}
+            <Link href="/login" className="font-semibold text-royal-700 underline-offset-4 transition-colors hover:text-gold-700 hover:underline">
+              Se connecter
             </Link>
           </p>
         </div>

@@ -69,7 +69,7 @@ function recipe(opts: {
 }
 
 export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes: Recipe[]; menus: Menu[]; settings: Settings } {
-  const password = hashPassword('costera2026');
+  const password = hashPassword('COSTERA2026');
 
   const users: User[] = [
     { id: 'usr-awa', name: 'Awa Koné', email: 'admin@costera.ci', role: 'admin', passwordHash: password, createdAt: daysAgoISO(90) },
@@ -336,6 +336,57 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
     currency: 'XOF',
     country: 'Côte d’Ivoire',
   };
+
+  // ------------------------------------------------------------------
+  // Enrichissements vitrine publique : nutrition (pour 100 g), grammes par
+  // unité de base, temps de cuisson, chef auteur et description des plats.
+  // ------------------------------------------------------------------
+  const NUT: Record<string, [number, number, number, number]> = {
+    'ing-attieke': [340, 3, 76, 1], 'ing-riz': [350, 7, 78, 1], 'ing-igname': [118, 1.5, 28, 0.2],
+    'ing-plantain': [122, 1.3, 32, 0.4], 'ing-manioc': [160, 1.4, 38, 0.3], 'ing-millet': [378, 11, 73, 4.3],
+    'ing-gari': [380, 2.5, 91, 1], 'ing-poulet': [165, 19.5, 0, 9.5], 'ing-boeuf': [250, 26, 0, 15],
+    'ing-carpe': [127, 18, 0, 6], 'ing-poisson-fume': [140, 26, 0, 3.5], 'ing-thon': [132, 28, 0, 1.3],
+    'ing-crevettes': [240, 40, 2, 3], 'ing-oeufs': [143, 12.5, 1.5, 9.5], 'ing-lait-concentre': [324, 8, 55, 9],
+    'ing-yaourt': [61, 3.5, 4.7, 3.2], 'ing-tomate': [18, 0.9, 3.9, 0.2], 'ing-tomate-concentree': [82, 4, 19, 0.5],
+    'ing-oignon': [40, 1.1, 9.3, 0.1], 'ing-cive': [32, 1.8, 7, 0.2], 'ing-ail': [149, 6.4, 33, 0.5],
+    'ing-gingembre': [80, 1.8, 18, 0.8], 'ing-piment': [40, 1.9, 9, 0.2], 'ing-aubergine': [25, 1, 6, 0.2],
+    'ing-gombo': [33, 1.9, 7.5, 0.2], 'ing-avocat': [160, 2, 8.5, 14.7], 'ing-citron': [29, 1.1, 9, 0.3],
+    'ing-palme': [280, 2, 12, 25], 'ing-huile-rouge': [884, 0, 0, 100], 'ing-huile': [884, 0, 0, 100],
+    'ing-arachide': [590, 25, 20, 50], 'ing-cube': [255, 8, 45, 5], 'ing-sel': [0, 0, 0, 0],
+    'ing-sucre': [387, 0, 100, 0], 'ing-bissap': [35, 0.4, 7.4, 0.4],
+  };
+  const BASE_G: Record<string, number> = {
+    'ing-oeufs': 50, 'ing-lait-concentre': 397, 'ing-yaourt': 1030, 'ing-tomate-concentree': 400,
+    'ing-cive': 100, 'ing-cube': 10, 'ing-huile-rouge': 920, 'ing-huile': 920,
+  };
+  for (const ing of ingredients) {
+    const n = NUT[ing.id] ?? [100, 2, 10, 2];
+    ing.nutrition = { kcal: n[0], protein: n[1], carbs: n[2], fat: n[3] };
+    if (BASE_G[ing.id]) ing.baseUnitGrams = BASE_G[ing.id];
+  }
+  const META: Record<string, [number, string, string]> = {
+    'rec-salade-avocat': [15, 'Chef Mariam Traoré', 'Avocat crémeux, tomates fraîches et oignon rouge relevés d’un filet de citron vert et d’huile douce. Une entrée fraîche et lumineuse, dressée minute comme au comptoir d’un grand hôtel.'],
+    'rec-garba': [35, 'Chef Yao N’Guessan', 'Le classique des rues d’Abidjan élevé au rang de gastronomie : attiéké croustillant, thon frit doré, tomates et oignons, piment dosé avec précision.'],
+    'rec-attieke-poisson': [45, 'Chef Yao N’Guessan', 'Poisson braisé entier à la peau caramélisée, servi sur un attiéké léger parfumé à la cive, accompagné de sa marinade tomate-oignon.'],
+    'rec-alloco': [30, 'Chef Mariam Traoré', 'Bouchées de plantain mûr frites jusqu’à l’ambre parfait, moelleuses au cœur, servies avec sa sauce tomate pimentée maison.'],
+    'rec-kedjenou': [90, 'Chef Awa Koné', 'Poulet fermier étouffé dans ses propres sucs, ail, gingembre et légumes fondants. Un plat mijoté profond, emblématique de la table ivoirienne.'],
+    'rec-sauce-graine': [120, 'Chef Awa Koné', 'Sauce graine de noix de palme longuement mijotée, viande fondante et fumet relevé, servie avec un foutou banane souple frappé à la main.'],
+    'rec-sauce-claire': [75, 'Chef Yao N’Guessan', 'Bouillon clair parfumé au poisson fumé, aubergines africaines et gombo, équilibré entre fraîcheur et caractère. Servi avec foutou d’igname.'],
+    'rec-tchep': [60, 'Chef Awa Koné', 'Riz parfumé cuit dans une sauce arachide soyeuse au poulet doré, légumes confits et épices douces. Réconfortant et généreux.'],
+    'rec-poulet-braise': [50, 'Chef Yao N’Guessan', 'Poulet braisé mariné 24 h, peau laquée aux épices, servi avec attiéké et sa sauce pimentée fraîche. Le signature des grandes soirées.'],
+    'rec-placali': [55, 'Chef Mariam Traoré', 'Placali de manioc préparé selon la tradition, nappé d’une sauce gombo onctueuse au poisson fumé et à l’huile rouge.'],
+    'rec-degue': [20, 'Chef Mariam Traoré', 'Mil perlé délicat enrobé de yaourt onctueux sucré au lait concentré, notes de vanille et de muscade. Un dessert frais et raffiné.'],
+    'rec-bissap': [15, 'Chef Awa Koné', 'Infusion glacée de fleurs d’hibiscus, menthe fraîche et pointe de vanille. Robe rubis profonde, servi très frais en carafe givrée.'],
+    'rec-wassa-wassa': [45, 'Chef Awa Koné', 'Wassa-wassa de manioc doré accompagné de poulet sauté aux légumes croquants et à la cive. Un plat de caractère, généreux et parfumé.'],
+  };
+  for (const r of recipes) {
+    const m = META[r.id];
+    if (m) {
+      r.cookTimeMin = m[0];
+      r.chef = m[1];
+      r.description = m[2];
+    }
+  }
 
   return { users, ingredients, recipes, menus, settings };
 }
