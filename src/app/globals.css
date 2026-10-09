@@ -102,9 +102,21 @@
 .splash2 {
   @apply fixed inset-0 z-[100] overflow-hidden;
   background: #240735;
-  /* Filet de sécurité PUR CSS : même si JavaScript échoue, le splash
-     devient invisible et cliquable-transparents après 7 s. */
-  animation: s2-kill 0s linear 7s forwards;
+  /* Entrée en fondu (le HTML servi contient le splash : pas de flash violet
+     pour les visiteurs de retour, fondu doux pour les nouveaux). */
+  /* Filet de sécurité PUR CSS : même si JavaScript échoue, est en cache ou
+     est désactivé, le splash devient invisible et non bloquant après 7 s. */
+  animation:
+    s2-root-in 0.45s ease-out 0.12s both,
+    s2-kill 0s linear 7s forwards;
+}
+@keyframes s2-root-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 @keyframes s2-kill {
   to {

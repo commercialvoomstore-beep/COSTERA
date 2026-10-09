@@ -1,9 +1,11 @@
 'use client';
 
-// COSTERA — Splash screen V2 : réception hôtelière, logo officiel centré,
-// « L'EXCELLENCE SE TRANSMET. » · « FORMATION • HÔTELLERIE • RESTAURATION »,
-// bouton « Passer l'intro → ». ≈ 4,3 s puis sortie automatique GARANTIE,
-// une fois par session, désactivé si prefers-reduced-motion.
+// COSTERA — Splash screen V3 INBLOQUABLE.
+// Le markup est rendu CÔTÉ SERVEUR : même sans aucun JavaScript, le cycle de
+// vie complet (apparition → tenue → disparition) est piloté par le CSS pur
+// (s2-kill : invisible + non bloquant après 7 s). JavaScript ne fait que
+// raffiner : sortie à 4,3 s, bouton/clic « Passer l'intro », une fois par
+// session, désactivé si prefers-reduced-motion.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const FLAG = 'costera_splash_done';
@@ -18,58 +20,63 @@ const PARTICLES = [
 ];
 
 export function SplashScreen({ logoSrc }: { logoSrc: string }) {
-  const [phase, setPhase] = useState<'hidden' | 'show' | 'leave' | 'done'>('hidden');
+  // gone = démontage côté client (retour de session, reduced-motion, timers).
+  // Par défaut false : le markup EST présent dans le HTML servi (SSR).
+  const [gone, setGone] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
-  const leaving = useRef(false);
+  const leavingRef = useRef(false);
 
-  /** Déclenche la sortie (appelé par le timer auto ET par le bouton). */
+  const remember = () => {
+    try {
+      sessionStorage.setItem(FLAG, '1');
+    } catch {
+      /* stockage indisponible */
+    }
+  };
+
   const leave = useCallback((fadeMs: number) => {
-    if (leaving.current) return;
-    leaving.current = true;
-    setPhase('leave');
+    if (leavingRef.current) return;
+    leavingRef.current = true;
+    setLeaving(true);
     window.setTimeout(() => {
-      setPhase('done');
-      try {
-        sessionStorage.setItem(FLAG, '1');
-      } catch {
-        /* stockage indisponible */
-      }
+      setGone(true);
+      remember();
     }, fadeMs);
   }, []);
 
   useEffect(() => {
-    // Une seule exécution au montage : les timers NE SONT PAS nettoyés
-    // par les changements de phase (sinon la sortie auto saute).
     let seen = false;
     try {
       seen = sessionStorage.getItem(FLAG) === '1';
     } catch {
       /* ignore */
     }
-    const reduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (seen || reduced) {
-      setPhase('done');
+      setGone(true); // retour de session : aucun splash
       return;
     }
-    setPhase('show');
-    // Sortie normale ≈ 4,3 s.
     const auto = window.setTimeout(() => leave(450), 4300);
-    // Filet de sécurité absolu : démontage dur à 6,5 s quoi qu'il arrive.
-    const hard = window.setTimeout(() => setPhase('done'), 6500);
+    const hard = window.setTimeout(() => {
+      setGone(true);
+      remember();
+    }, 6500);
     return () => {
       window.clearTimeout(auto);
       window.clearTimeout(hard);
-    }; // uniquement au démontage réel
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    };
+  }, [leave]);
 
-  if (phase === 'done' || phase === 'hidden') return null;
+  if (gone) return null;
 
   const src = logoFailed ? '/logo-costera.svg' : logoSrc;
 
   return (
     <div
-      className={`splash2 ${phase === 'leave' ? 'splash2-leave' : ''}`}
+      className={`splash2 ${leaving ? 'splash2-leave' : ''}`}
       role="presentation"
       onClick={() => leave(300)}
       title="Cliquer pour passer l'intro"
