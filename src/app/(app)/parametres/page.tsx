@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { PlanSettingsForm } from '@/components/forms/PlanSettingsForm';
 import { SettingsForm } from '@/components/forms/SettingsForm';
 import { Card, CardHeader, PageHeader } from '@/components/ui';
 import { getSessionUserId } from '@/lib/auth';
@@ -22,6 +23,12 @@ export default async function SettingsPage() {
           <CardHeader title="Établissement & objectif" description="L’objectif de food cost pilote les alertes et le prix conseillé de toutes les fiches." />
           <div className="p-5">
             <SettingsForm settings={db.settings} />
+          </div>
+        </Card>
+        <Card>
+          <CardHeader title="Forfaits & tarification" description="Prix des abonnements, quotas de menus, tailles vidéo et TVA. Ces valeurs pilotent toute la plateforme." />
+          <div className="p-5">
+            <PlanSettingsForm settings={db.settings} />
           </div>
         </Card>
         <Card>

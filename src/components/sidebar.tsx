@@ -5,16 +5,22 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   Carrot,
   ChefHat,
+  CreditCard,
   FileText,
+  Gem,
+  Inbox,
   LayoutDashboard,
   LogOut,
   Settings,
+  Sparkles,
+  UserCircle2,
   Users,
   UtensilsCrossed,
 } from 'lucide-react';
 import { logoutAction } from '@/server/actions/auth';
-import type { Role } from '@/lib/types';
+import type { PlanLevel, Role } from '@/lib/types';
 import { BrandLogoClient } from './logo-client';
+import { PlanBadge } from './plan-ui';
 
 interface NavItem {
   href: string;
@@ -28,12 +34,17 @@ const NAV: NavItem[] = [
   { href: '/ingredients', label: 'Ingrédients', icon: Carrot },
   { href: '/recettes', label: 'Recettes', icon: ChefHat },
   { href: '/menus', label: 'Menus', icon: UtensilsCrossed },
+  { href: '/cartes', label: 'Mes cartes', icon: CreditCard },
   { href: '/rapports', label: 'Rapports', icon: FileText },
+  { href: '/forfaits', label: 'Nos forfaits', icon: Sparkles },
+  { href: '/abonnement', label: 'Mon abonnement', icon: Gem },
+  { href: '/profil', label: 'Mon profil', icon: UserCircle2 },
+  { href: '/demandes', label: 'Demandes d’abonnement', icon: Inbox, roles: ['admin'] },
   { href: '/equipe', label: 'Équipe', icon: Users, roles: ['admin'] },
   { href: '/parametres', label: 'Paramètres', icon: Settings, roles: ['admin'] },
 ];
 
-export function Sidebar({ user, logoSrc }: { user: { name: string; email: string; role: Role }; logoSrc: string }) {
+export function Sidebar({ user, logoSrc }: { user: { name: string; email: string; role: Role; plan?: PlanLevel }; logoSrc: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const items = NAV.filter((n) => !n.roles || n.roles.includes(user.role));
@@ -83,6 +94,9 @@ export function Sidebar({ user, logoSrc }: { user: { name: string; email: string
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-white">{user.name}</p>
               <p className="truncate text-xs text-royal-100/50">{user.email}</p>
+              <div className="mt-1.5">
+                <PlanBadge plan={user.plan ?? 'free'} />
+              </div>
             </div>
           </div>
           <button onClick={onLogout} className="btn-on-dark w-full">

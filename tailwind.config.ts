@@ -35,6 +35,20 @@ const config: Config = {
           900: '#614a2a',
           950: '#382a17',
         },
+        // Argent — forfait SILVER
+        silver: {
+          50: '#f7f8fa',
+          100: '#eef0f3',
+          200: '#dfe2e7',
+          300: '#C9CED6',
+          400: '#aeb5c0',
+          500: '#9AA2AE',
+          600: '#8E96A3',
+          700: '#757d8a',
+          800: '#5c636e',
+          900: '#464b54',
+          950: '#2c2f35',
+        },
         // Orange gastronomique — accent secondaire uniquement
         gastro: {
           50: '#fbf3ec',

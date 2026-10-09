@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { AlertTriangle, ArrowDownRight, ArrowUpRight, ChefHat, Gauge, Percent, Wallet } from 'lucide-react';
 import { BarList, Donut } from '@/components/charts';
 import { DashboardExtras, type DashRecipeRow, type PriceAlertRow } from '@/components/dashboard-extras';
+import { PlanBadge, QuotaGauge } from '@/components/plan-ui';
 import { Badge, Card, CardHeader, PageHeader } from '@/components/ui';
+import { isUnlimited, resolvePlanConfig } from '@/lib/plans';
+import { countUserDishes, userLevel } from '@/server/planService';
 import { priceIncreaseAlert } from '@/lib/costing-engine';
 import { fmtDate, fcfa, pct } from '@/lib/format';
 import { costOfRecipe, priceDeltaPct, ratioStatus } from '@/lib/foodcost';
@@ -105,6 +108,23 @@ export default async function DashboardPage() {
         title={`Bonjour, ${user.name.split(' ')[0]}`}
         description={`Voici la situation de ${db.settings.orgName} — objectif food cost : ${target} %.`}
       />
+
+      {/* Quota de menus du forfait */}
+      <Card className="mb-6 flex flex-wrap items-center justify-between gap-4 p-5">
+        <div className="min-w-[260px] flex-1">
+          <div className="mb-2 flex items-center gap-2">
+            <p className="text-xs font-bold uppercase tracking-wide text-stone-500">Mon quota de menus</p>
+            <PlanBadge plan={userLevel(user)} />
+          </div>
+          <QuotaGauge
+            used={countUserDishes(db, user.id)}
+            limit={resolvePlanConfig(db.settings).quotas[userLevel(user)]}
+            plan={userLevel(user)}
+            unlimited={isUnlimited(resolvePlanConfig(db.settings).quotas[userLevel(user)])}
+          />
+        </div>
+        <Link href="/cartes" className="btn-ghost shrink-0">Gérer mes cartes</Link>
+      </Card>
 
       {/* KPI */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

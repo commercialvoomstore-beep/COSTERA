@@ -16,6 +16,7 @@ const RECIPE_IMAGES: Record<string, string> = {
   'rec-degue': '/dishes/degue.jpg',
   'rec-bissap': '/dishes/bissap.jpg',
   'rec-salade-avocat': '/dishes/alloco.jpg',
+  'rec-gateau-gingembre': '/dishes/degue.jpg',
 };
 
 const CATEGORY_IMAGES: Record<RecipeCategory, string> = {

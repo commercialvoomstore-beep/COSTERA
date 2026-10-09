@@ -2,7 +2,7 @@
 // Cuisine ivoirienne, prix en FCFA, dates relatives au premier lancement.
 import { hashPassword } from '@/lib/auth';
 import { daysAgoISO } from '@/lib/format';
-import type { Ingredient, Menu, Recipe, Settings, User } from '@/lib/types';
+import type { Card, Dish, Ingredient, Menu, PlanLevel, Recipe, Settings, User } from '@/lib/types';
 
 type Hist = [factor: number, daysAgo: number, note?: string][];
 
@@ -68,13 +68,56 @@ function recipe(opts: {
   };
 }
 
-export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes: Recipe[]; menus: Menu[]; settings: Settings } {
+export function buildSeed(): {
+  users: User[];
+  ingredients: Ingredient[];
+  recipes: Recipe[];
+  menus: Menu[];
+  settings: Settings;
+  cards: Card[];
+  dishes: Dish[];
+} {
   const password = hashPassword('COSTERA2026');
 
   const users: User[] = [
-    { id: 'usr-awa', name: 'Awa Koné', email: 'admin@costera.ci', role: 'admin', passwordHash: password, createdAt: daysAgoISO(90) },
-    { id: 'usr-yao', name: 'Yao Kouassi', email: 'chef@costera.ci', role: 'chef', passwordHash: password, createdAt: daysAgoISO(80) },
-    { id: 'usr-mariam', name: 'Mariam Traoré', email: 'gestion@costera.ci', role: 'gestionnaire', passwordHash: password, createdAt: daysAgoISO(70) },
+    {
+      id: 'usr-awa', name: 'Awa Koné', email: 'admin@costera.ci', role: 'admin', passwordHash: password,
+      createdAt: daysAgoISO(90), plan: 'gold',
+    },
+    {
+      id: 'usr-yao', name: 'Yao Kouassi', email: 'chef@costera.ci', role: 'chef', passwordHash: password,
+      createdAt: daysAgoISO(80), plan: 'free',
+      profile: {
+        businessName: 'Maquis Chez Yao', displayNameMode: 'business',
+        bio: 'Cuisine ivoirienne de tradition, braisée au feu de bois à Abidjan.',
+        specialties: ['Poisson braisé', 'Alloco', 'Kédjénou'], city: 'Abidjan',
+        phone: '+225 07 00 00 00 01', whatsapp: '+225 07 00 00 00 01',
+      },
+    },
+    {
+      id: 'usr-mariam', name: 'Mariam Traoré', email: 'gestion@costera.ci', role: 'gestionnaire', passwordHash: password,
+      createdAt: daysAgoISO(70), plan: 'silver', planStartedAt: daysAgoISO(20), planExpiresAt: daysAgoISO(-10),
+    },
+    {
+      id: 'usr-assie', name: 'Assiè N’Dri', email: 'chef.silver@costera.ci', role: 'chef', passwordHash: password,
+      createdAt: daysAgoISO(60), plan: 'silver', planStartedAt: daysAgoISO(15), planExpiresAt: daysAgoISO(-15),
+      profile: {
+        businessName: 'Le Rooftop d’Assiè', displayNameMode: 'business',
+        bio: 'Bistronomie ivoirienne vue lagune, produits du marché frais.',
+        specialties: ['Kédjénou', 'Sauces mijotées'], city: 'Abidjan',
+        phone: '+225 07 00 00 00 02',
+      },
+    },
+    {
+      id: 'usr-kadia', name: 'Kadia Bamba', email: 'chef.gold@costera.ci', role: 'chef', passwordHash: password,
+      createdAt: daysAgoISO(55), plan: 'gold', planStartedAt: daysAgoISO(30), planExpiresAt: daysAgoISO(-335),
+      profile: {
+        businessName: 'Hôtel Ivoire Émeraude', displayNameMode: 'business',
+        bio: 'Cheffe exécutive, gastronomie ivoirienne raffinée et catering d’exception.',
+        specialties: ['Menus dégustation', 'Événementiel', 'Pâtisserie'], city: 'Abidjan',
+        phone: '+225 07 00 00 00 03', website: 'https://ivoire-emeraude.ci',
+      },
+    },
   ];
 
   const ingredients: Ingredient[] = [
@@ -113,6 +156,8 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
     ingredient({ id: 'ing-sel', name: 'Sel fin', category: 'Épices & condiments', unitId: 'kg', price: 500, hist: [[1, 50]] }),
     ingredient({ id: 'ing-sucre', name: 'Sucre en poudre', category: 'Autres', unitId: 'kg', price: 1000, hist: [[1, 50]] }),
     ingredient({ id: 'ing-bissap', name: 'Fleurs d’hibiscus séchées (bissap)', category: 'Boissons', unitId: 'kg', price: 3500, supplier: 'Coopérative de Bouaké', hist: [[1, 47]] }),
+    ingredient({ id: 'ing-farine', name: 'Farine de blé', category: 'Féculents & céréales', unitId: 'kg', price: 800, hist: [[1, 40]] }),
+    ingredient({ id: 'ing-beurre', name: 'Beurre doux', category: 'Œufs & produits laitiers', unitId: 'kg', price: 4500, hist: [[1, 30]] }),
   ];
 
   const recipes: Recipe[] = [
@@ -285,6 +330,19 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
       ],
     }),
     recipe({
+      id: 'rec-gateau-gingembre', name: 'Gâteau au gingembre', category: 'Desserts', portions: 8, salePrice: 1200,
+      lines: [
+        line('ing-farine', 0.4, 'kg'), line('ing-sucre', 0.25, 'kg'), line('ing-oeufs', 4, 'piece'),
+        line('ing-beurre', 0.2, 'kg'), line('ing-gingembre', 0.08, 'kg'), line('ing-lait-concentre', 0.2, 'boite'),
+      ],
+      steps: [
+        'Râper finement le gingembre frais et l’infuser dans le lait concentré tiède.',
+        'Crémer le beurre et le sucre, puis incorporer les œufs un à un.',
+        'Ajouter la farine tamisée et le lait parfumé au gingembre.',
+        'Cuire à 170 °C pendant 35 minutes, laisser refroidir avant de démouler.',
+      ],
+    }),
+    recipe({
       id: 'rec-wassa-wassa', name: 'Wassa-wassa au poulet', category: 'Plats', portions: 4, salePrice: 2600, status: 'brouillon',
       lines: [
         line('ing-gari', 0.8, 'kg'), line('ing-poulet', 0.6, 'kg'), line('ing-tomate', 0.25, 'kg'),
@@ -335,6 +393,16 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
     targetFoodCostPct: 35,
     currency: 'XOF',
     country: 'Côte d’Ivoire',
+    plans: {
+      prices: {
+        silver: { monthly: 15000, yearly: 150000 },
+        gold: { monthly: 35000, yearly: 350000 },
+      },
+      quotas: { free: 5, silver: 10, gold: -1 },
+      videoMaxMb: { free: 0, silver: 100, gold: 500 },
+      tvaPct: 18,
+      tvaEnabled: true,
+    },
   };
 
   // ------------------------------------------------------------------
@@ -399,5 +467,118 @@ export function buildSeed(): { users: User[]; ingredients: Ingredient[]; recipes
     }
   }
 
-  return { users, ingredients, recipes, menus, settings };
+  // ------------------------------------------------------------------
+  // Cartes & plats de démonstration (sections 1 & 5).
+  // Un chef par niveau : FREE à sa limite (5), SILVER à sa limite (10),
+  // GOLD sans limite. Les niveaux d'accès des plats sont répartis entre
+  // FREE, SILVER et GOLD pour illustrer le verrouillage.
+  // ------------------------------------------------------------------
+  const cards: Card[] = [];
+  const dishes: Dish[] = [];
+  let dishSeq = 0;
+  const slug = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+  function addCard(c: Omit<Card, 'createdAt' | 'updatedAt' | 'shareSlug'>): Card {
+    const card: Card = { ...c, shareSlug: slug(c.name) + '-' + c.id.slice(-4), createdAt: daysAgoISO(25), updatedAt: daysAgoISO(2) };
+    cards.push(card);
+    return card;
+  }
+  function addDish(card: Card, d: Omit<Dish, 'id' | 'cardId' | 'ownerId' | 'createdAt' | 'updatedAt' | 'sortIndex'>): void {
+    dishSeq += 1;
+    dishes.push({
+      ...d,
+      id: `dish-${String(dishSeq).padStart(3, '0')}`,
+      cardId: card.id,
+      ownerId: card.ownerId,
+      sortIndex: dishSeq,
+      createdAt: daysAgoISO(20),
+      updatedAt: daysAgoISO(1),
+    });
+  }
+
+  const yt = (externalId: string, title: string, chapters?: { t: number; label: string }[]) => ({
+    kind: 'youtube' as const, externalId, url: `https://www.youtube.com/watch?v=${externalId}`, title,
+    chapters: chapters ?? [],
+  });
+
+  /* --- Chef FREE (Yao) : 2 cartes, 5 plats → à la limite du quota --- */
+  const yaoC1 = addCard({
+    id: 'card-yao-maq', ownerId: 'usr-yao', type: 'cuisine', name: 'Carte du Maquis',
+    slogan: 'Saveurs braisées d’Abidjan', coverFileId: '/dishes/attieke-poisson.jpg',
+    theme: 'maquis', font: 'classique', level: 'free', status: 'publiee',
+    categories: ['Entrées', 'Plats', 'Desserts'],
+  });
+  const yaoC2 = addCard({
+    id: 'card-yao-boi', ownerId: 'usr-yao', type: 'boissons', name: 'Boissons & Douceurs',
+    slogan: 'Fraîcheur du marché', coverFileId: '/dishes/bissap.jpg',
+    theme: 'bistro', font: 'moderne', level: 'free', status: 'publiee',
+    categories: ['Boissons', 'Desserts'],
+  });
+  addDish(yaoC1, { name: 'Attiéké-poisson braisé', description: 'Poisson entier braisé, attiéké léger, marinade tomate-oignon.', price: 3500, photoFileId: '/dishes/attieke-poisson.jpg', category: 'Plats', level: 'free', allergens: ['poisson'], recipeId: 'rec-attieke-poisson', status: 'publiee', video: yt('dQw4w9WgXcQ', 'Braisser le poisson comme au maquis', [{ t: 0, label: 'Préparer la marinade' }, { t: 45, label: 'Saisir le poisson' }, { t: 120, label: 'Dresser avec l’attiéké' }]) });
+  addDish(yaoC1, { name: 'Kédjénou de poulet', description: 'Poulet fermier étouffé, légumes fondants, cuit en canari.', price: 4500, photoFileId: '/dishes/kedjenou.jpg', category: 'Plats', level: 'silver', allergens: [], recipeId: 'rec-kedjenou', status: 'publiee', video: yt('dQw4w9WgXcQ', 'Le vrai kedjénou en canari') });
+  addDish(yaoC1, { name: 'Alloco-poulet braisé', description: 'Plantains frits dorés, poulet braisé laqué, sauce pimentée.', price: 3000, photoFileId: '/dishes/alloco.jpg', category: 'Plats', level: 'free', allergens: [], recipeId: 'rec-alloco', status: 'publiee' });
+  addDish(yaoC2, { name: 'Jus de bissap glacé', description: 'Hibiscus infusé, menthe et vanille, servi très frais.', price: 500, photoFileId: '/dishes/bissap.jpg', category: 'Boissons', level: 'free', allergens: [], recipeId: 'rec-bissap', status: 'publiee' });
+  addDish(yaoC2, { name: 'Gâteau au gingembre', description: 'Gâteau moelleux parfumé au gingembre frais et lait concentré.', price: 1200, photoFileId: '/dishes/degue.jpg', category: 'Desserts', level: 'gold', allergens: ['œufs', 'lait'], recipeId: 'rec-gateau-gingembre', status: 'publiee' });
+
+  /* --- Chef SILVER (Assiè) : 2 cartes, 10 plats → à la limite du quota --- */
+  const assieC1 = addCard({
+    id: 'card-assie-bis', ownerId: 'usr-assie', type: 'cuisine', name: 'Menu Bistronomie',
+    slogan: 'Cuisine ivoirienne vue lagune', coverFileId: '/dishes/kedjenou.jpg',
+    theme: 'grand-hotel', font: 'classique', level: 'free', status: 'publiee',
+    categories: ['Entrées', 'Plats', 'Desserts'],
+  });
+  const assieC2 = addCard({
+    id: 'card-assie-bar', ownerId: 'usr-assie', type: 'cocktails-bar', name: 'Carte des Boissons',
+    slogan: 'Cocktails & jus du marché', coverFileId: '/dishes/bissap.jpg',
+    theme: 'lounge-nuit', font: 'moderne', level: 'silver', status: 'publiee',
+    categories: ['Boissons'],
+  });
+  const assiePlats: [string, string, number, string, PlanLevel, string | undefined, string[]][] = [
+    ['Attiéké-poisson braisé', 'Poisson entier braisé, attiéké parfumé à la cive.', 3800, '/dishes/attieke-poisson.jpg', 'free', 'rec-attieke-poisson', ['poisson']],
+    ['Kédjénou de poulet', 'Poulet mijoté en canari, légumes confits.', 4800, '/dishes/kedjenou.jpg', 'free', 'rec-kedjenou', []],
+    ['Foutou-sauce graine', 'Sauce graine de palme, viande fondante, foutou banane.', 5200, '/dishes/sauce-graine.jpg', 'silver', 'rec-sauce-graine', ['fruits à coque']],
+    ['Alloco-poulet braisé', 'Plantains ambrés, poulet braisé aux épices.', 3200, '/dishes/alloco.jpg', 'silver', 'rec-alloco', []],
+    ['Gâteau au gingembre', 'Dessert signature au gingembre frais.', 1500, '/dishes/degue.jpg', 'gold', 'rec-gateau-gingembre', ['œufs', 'lait']],
+  ];
+  for (const [name, description, price, photo, level, recipeId, allergens] of assiePlats) {
+    addDish(assieC1, { name, description, price, photoFileId: photo, category: 'Plats', level, allergens, recipeId, status: 'publiee' });
+  }
+  const assieBoissons: [string, string, number, PlanLevel][] = [
+    ['Jus de bissap glacé', 'Hibiscus, menthe, vanille.', 500, 'free'],
+    ['Bissap pétillant', 'Hibiscus infusé, bulles fines.', 800, 'silver'],
+    ['Gingembre tonique', 'Gingembre frais, citron vert.', 700, 'free'],
+    ['Cocktail Lagune', 'Rhum, bissap, gingembre.', 2500, 'gold'],
+    ['Baobab crémeux', 'Fruit du baobab, lait glacé.', 1200, 'silver'],
+  ];
+  for (const [name, description, price, level] of assieBoissons) {
+    addDish(assieC2, { name, description, price, photoFileId: '/dishes/bissap.jpg', category: 'Boissons', level, allergens: [], status: 'publiee' });
+  }
+
+  /* --- Chef GOLD (Kadia) : 2 cartes, 12 plats → illimité --- */
+  const kadiaC1 = addCard({
+    id: 'card-kadia-deg', ownerId: 'usr-kadia', type: 'menu-degustation', name: 'Menu Dégustation Émeraude',
+    slogan: 'Sept temps autour de la Côte d’Ivoire', coverFileId: '/dishes/hero-table.jpg',
+    theme: 'grand-hotel', accentColor: '#E2C275', font: 'classique', level: 'silver', status: 'publiee',
+    categories: ['Entrées', 'Plats', 'Desserts', 'Boissons'],
+  });
+  const kadiaC2 = addCard({
+    id: 'card-kadia-evn', ownerId: 'usr-kadia', type: 'evenementielle', name: 'Carte Événementielle',
+    slogan: 'Mariages & séminaires d’exception', coverFileId: '/dishes/poulet-braise.jpg',
+    theme: 'grand-hotel', accentColor: '#E2C275', font: 'affiche', level: 'gold', status: 'publiee',
+    categories: ['Entrées', 'Plats', 'Desserts', 'Boissons'],
+  });
+  const kadiaPlats: [string, string, number, string, PlanLevel, string | undefined, string[]][] = [
+    ['Attiéké-poisson braisé', 'Poisson braisé entier, attiéké ciselé.', 4200, '/dishes/attieke-poisson.jpg', 'free', 'rec-attieke-poisson', ['poisson']],
+    ['Kédjénou de poulet', 'Le classique en canari, dressage gastronomique.', 5200, '/dishes/kedjenou.jpg', 'silver', 'rec-kedjenou', []],
+    ['Foutou-sauce graine', 'Sauce graine longuement mijotée.', 5800, '/dishes/sauce-graine.jpg', 'silver', 'rec-sauce-graine', ['fruits à coque']],
+    ['Alloco-poulet braisé', 'Plantains frits, poulet laqué 24 h.', 3600, '/dishes/alloco.jpg', 'free', 'rec-alloco', []],
+    ['Gâteau au gingembre', 'Pâtisserie signature au gingembre.', 1800, '/dishes/degue.jpg', 'gold', 'rec-gateau-gingembre', ['œufs', 'lait']],
+    ['Jus de bissap glacé', 'Hibiscus, menthe, vanille, carafe givrée.', 600, '/dishes/bissap.jpg', 'free', 'rec-bissap', []],
+  ];
+  for (const [name, description, price, photo, level, recipeId, allergens] of kadiaPlats) {
+    addDish(kadiaC1, { name, description, price, photoFileId: photo, category: 'Plats', level, allergens, recipeId, status: 'publiee' });
+    addDish(kadiaC2, { name, description, price: Math.round(price * 1.15), photoFileId: photo, category: 'Plats', level, allergens, recipeId, status: 'publiee' });
+  }
+
+  return { users, ingredients, recipes, menus, settings, cards, dishes };
 }

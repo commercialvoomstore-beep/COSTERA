@@ -668,3 +668,189 @@
 .sim-range {
   @apply h-2 cursor-pointer appearance-none rounded-full bg-royal-100 accent-[#5B2D9E];
 }
+
+/* ============================================================
+   FORFAITS FREE / SILVER / GOLD — badges, cartes, verrouillage
+   ============================================================ */
+
+/* ---- Badges de forfait ---- */
+.plan-badge {
+  @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider;
+}
+/* FREE : vert sauge discret */
+.plan-badge-free {
+  background: #e7ede4;
+  color: #5a7a56;
+  border: 1px solid #c3d1bf;
+}
+/* SILVER : dégradé argent + reflet métallique */
+.plan-badge-silver {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #C9CED6 0%, #8E96A3 100%);
+  color: #23262b;
+  border: 1px solid #aeb5c0;
+}
+.plan-badge-silver::after,
+.plan-card-silver .plan-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgb(255 255 255 / 0.55) 40%, transparent 60%);
+  transform: translateX(-120%);
+  animation: shine 4.5s ease-in-out infinite;
+}
+/* GOLD : dégradé or + éclat animé */
+.plan-badge-gold {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #B8892B 0%, #E2C275 100%);
+  color: #3a2a08;
+  border: 1px solid #d3ab55;
+}
+.plan-badge-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 25%, rgb(255 255 255 / 0.6) 45%, transparent 65%);
+  transform: translateX(-120%);
+  animation: shine 3.5s ease-in-out infinite;
+}
+@keyframes shine {
+  0% { transform: translateX(-130%) skewX(-12deg); }
+  55%, 100% { transform: translateX(130%) skewX(-12deg); }
+}
+
+/* ---- Cartes de tarification ---- */
+.plan-card {
+  @apply relative flex flex-col rounded-2xl bg-white p-6;
+  border: 1px solid #e7e2f0;
+  box-shadow: 0 1px 3px rgb(52 49 59 / 0.05);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
+}
+.plan-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px -12px rgb(34 16 56 / 0.2); }
+/* GOLD : bordure dorée animée + léger halo */
+.plan-card-gold {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(#fffdf7, #fffdf7) padding-box,
+    linear-gradient(130deg, #B8892B, #E2C275, #B8892B) border-box;
+  background-size: 100% 100%, 220% 220%;
+  animation: gold-border 5s ease infinite;
+  box-shadow: 0 12px 34px -12px rgb(184 137 43 / 0.4);
+}
+@keyframes gold-border {
+  0%, 100% { background-position: 0 0, 0% 50%; }
+  50% { background-position: 0 0, 100% 50%; }
+}
+
+/* ---- Contenu verrouillé : aperçu flouté + cadenas ---- */
+.locked-overlay {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.locked-preview {
+  filter: blur(7px) saturate(0.85);
+  transform: scale(1.04);
+  pointer-events: none;
+  user-select: none;
+}
+.locked-veil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgb(34 16 56 / 0.35);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+}
+/* Cadenas : micro-animation d'ouverture + vibration au clic refusé */
+@keyframes padlock-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.padlock-shake { animation: padlock-shake 0.4s ease; }
+@keyframes padlock-open {
+  0% { transform: rotate(0) scale(1); }
+  50% { transform: rotate(-14deg) scale(1.15); }
+  100% { transform: rotate(0) scale(1); }
+}
+.padlock-open { animation: padlock-open 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ---- Jauge de quota ---- */
+.quota-track {
+  @apply h-2.5 w-full overflow-hidden rounded-full bg-sand-100;
+}
+.quota-fill {
+  @apply h-full rounded-full;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.quota-fill-free { background: linear-gradient(90deg, #8fae8b, #5a7a56); }
+.quota-fill-silver { background: linear-gradient(90deg, #C9CED6, #8E96A3); }
+.quota-fill-gold { background: linear-gradient(90deg, #B8892B, #E2C275); }
+
+/* ---- Bouton argent ---- */
+.btn-silver {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition;
+  background: linear-gradient(135deg, #C9CED6, #8E96A3);
+  color: #23262b;
+  border: 1px solid #aeb5c0;
+}
+.btn-silver:hover { filter: brightness(1.05); }
+
+/* ---- Glassmorphism léger ---- */
+.glass {
+  background: rgb(255 255 255 / 0.72);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgb(255 255 255 / 0.5);
+}
+
+/* ---- Stepper de paiement ---- */
+.stepper { @apply flex items-center gap-2; }
+.step { @apply flex items-center gap-2; }
+.step-dot {
+  @apply grid h-8 w-8 place-items-center rounded-full border text-xs font-bold;
+  border-color: #d9c8ee; color: #8347bd; background: #f6f2fb;
+  transition: all 0.3s;
+}
+.step-active .step-dot { background: linear-gradient(135deg, #2D1B69, #5B2D9E); color: #fff; border-color: #5B2D9E; }
+.step-done .step-dot { background: #15803d; color: #fff; border-color: #15803d; }
+.step-line { @apply h-px w-8 bg-linec; }
+
+/* ---- Toasts ---- */
+.toast {
+  @apply pointer-events-auto flex items-start gap-3 rounded-xl px-4 py-3 text-sm font-medium shadow-pop;
+  animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.toast-success { background: #14532d; color: #ecfdf5; }
+.toast-error { background: #7f1d1d; color: #fef2f2; }
+.toast-info { background: #241238; color: #F8F4EB; }
+
+/* ---- Zone de dépôt (drag & drop) ---- */
+.dropzone {
+  @apply flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-8 text-center transition;
+  border-color: #d9c8ee; background: #faf8fd;
+}
+.dropzone:hover, .dropzone:focus-within, .dropzone.is-drag { border-color: #8347bd; background: #f2ebfb; }
+
+/* ---- Squelettes de chargement ---- */
+.skeleton {
+  @apply animate-pulse rounded-xl bg-sand-100;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-badge-silver::after, .plan-badge-gold::after { animation: none; }
+  .plan-card-gold { animation: none; }
+  .padlock-shake, .padlock-open, .toast { animation: none; }
+}
