@@ -53,3 +53,24 @@ export async function getSessionUserId(): Promise<string | null> {
   const store = await cookies();
   return decodeSession(store.get(SESSION_COOKIE)?.value);
 }
+
+/**
+ * Options du cookie de session, adaptées au contexte :
+ * - HTTPS (aperçu proxifié, iframe cross-site) : SameSite=None + Secure,
+ *   sinon le navigateur refuse SILENCIEUSEMENT le cookie dans un cadre
+ *   tiers et la connexion semble « ne rien faire » ;
+ * - HTTP local (dev) : SameSite=Lax (None exigerait Secure).
+ */
+export function sessionCookieOptions(isHttps: boolean) {
+  return isHttps
+    ? { httpOnly: true, sameSite: 'none' as const, secure: true, path: '/', maxAge: SESSION_TTL_MS / 1000 }
+    : { httpOnly: true, sameSite: 'lax' as const, secure: false, path: '/', maxAge: SESSION_TTL_MS / 1000 };
+}
+
+/** Détecte le HTTPS terminé par le proxy/edge (x-forwarded-proto ou hôte aperçu). */
+export function isHttpsRequest(h: { get(name: string): string | null }): boolean {
+  const fwd = h.get('x-forwarded-proto');
+  if (fwd) return fwd.split(',')[0].trim() === 'https';
+  const host = h.get('host') ?? '';
+  return host.endsWith('.e2b.app');
+}

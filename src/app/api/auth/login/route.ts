@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { SESSION_COOKIE, encodeSession, verifyPassword } from '@/lib/auth';
+import { SESSION_COOKIE, encodeSession, verifyPassword, isHttpsRequest, sessionCookieOptions } from '@/lib/auth';
 import { getDB } from '@/server/db';
 
 /**
@@ -27,12 +27,10 @@ export async function POST(req: Request) {
   }
 
   const store = await cookies();
-  store.set(SESSION_COOKIE, encodeSession(user.id), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60,
-  });
+  store.set(
+    SESSION_COOKIE,
+    encodeSession(user.id),
+    sessionCookieOptions(isHttpsRequest({ get: (n) => req.headers.get(n) })),
+  );
   return NextResponse.redirect(new URL('/dashboard', req.url), 303);
 }

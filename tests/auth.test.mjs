@@ -93,6 +93,14 @@ globalThis.__TEST_COOKIE_DELETED = undefined;
 await logoutAction();
 check('logoutAction supprime le cookie de session', globalThis.__TEST_COOKIE_DELETED === SESSION_COOKIE);
 
+console.log('== 6bis. Cookie adaptatif (iframe cross-site / HTTPS) ==');
+const { sessionCookieOptions } = await import('@/lib/auth');
+const httpsOpts = sessionCookieOptions(true);
+check('HTTPS → SameSite=None + Secure (accepté en cadre tiers)', httpsOpts.sameSite === 'none' && httpsOpts.secure === true && httpsOpts.httpOnly === true);
+const httpOpts = sessionCookieOptions(false);
+check('HTTP local → SameSite=Lax sans Secure', httpOpts.sameSite === 'lax' && httpOpts.secure === false && httpOpts.httpOnly === true);
+check('durée 7 jours dans les deux contextes', httpsOpts.maxAge === 7 * 24 * 60 * 60 && httpOpts.maxAge === 7 * 24 * 60 * 60);
+
 console.log('== 7. Inscription (compte créé puis retiré) ==');
 const before = getDB().users.length;
 globalThis.__TEST_COOKIE_SET = undefined;

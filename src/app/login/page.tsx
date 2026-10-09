@@ -23,7 +23,9 @@ export default async function LoginPage({
   const initialError =
     params.erreur === 'identifiants'
       ? 'Identifiants incorrects. Vérifiez votre e-mail et votre mot de passe.'
-      : null;
+      : params.erreur === 'session'
+        ? 'Votre session est expirée ou n’a pas pu être établie (cookie refusé par le navigateur). Reconnectez-vous ; si cela se reproduit, ouvrez cette page dans un onglet à part.'
+        : null;
 
   const demoAccounts = getDB()
     .users.map((u) => ({ name: u.name, email: u.email, role: u.role }))

@@ -4,15 +4,22 @@ import { NotificationBell } from '@/components/notification-bell';
 import { Sidebar } from '@/components/sidebar';
 import { ToastProvider } from '@/components/toast';
 import { officialLogoDisplaySrc } from '@/components/logo';
-import { getSessionUserId } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { getSessionUserId, SESSION_COOKIE } from '@/lib/auth';
 import { getDB } from '@/server/db';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const userId = await getSessionUserId();
-  if (!userId) redirect('/login');
+  if (!userId) {
+    // Un cookie de session présent mais invalide/expiré mérite un message
+    // explicite au lieu d'un retour silencieux au formulaire.
+    const raw = (await cookies()).get(SESSION_COOKIE)?.value;
+    if (raw) redirect('/login?erreur=session');
+    redirect('/login');
+  }
   const db = getDB();
   const user = db.users.find((u) => u.id === userId);
-  if (!user) redirect('/login');
+  if (!user) redirect('/login?erreur=session');
 
   const notifications = db.notifications
     .filter((n) => n.userId === user.id)

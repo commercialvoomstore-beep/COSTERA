@@ -1,7 +1,7 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { SESSION_COOKIE, encodeSession, hashPassword, verifyPassword } from '@/lib/auth';
+import { cookies, headers } from 'next/headers';
+import { SESSION_COOKIE, encodeSession, hashPassword, verifyPassword, isHttpsRequest, sessionCookieOptions } from '@/lib/auth';
 import { getDB, newId, nowISO, saveDB } from '@/server/db';
 
 export async function loginAction(email: unknown, password: unknown): Promise<{ ok: boolean; error?: string }> {
@@ -15,13 +15,7 @@ export async function loginAction(email: unknown, password: unknown): Promise<{ 
     return { ok: false, error: 'Identifiants incorrects. Vérifiez votre e-mail et votre mot de passe.' };
   }
   const store = await cookies();
-  store.set(SESSION_COOKIE, encodeSession(user.id), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60,
-  });
+  store.set(SESSION_COOKIE, encodeSession(user.id), sessionCookieOptions(isHttpsRequest(await headers())));
   return { ok: true };
 }
 
@@ -64,12 +58,6 @@ export async function registerAction(input: {
   });
   saveDB(db);
   const store = await cookies();
-  store.set(SESSION_COOKIE, encodeSession(id), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60,
-  });
+  store.set(SESSION_COOKIE, encodeSession(id), sessionCookieOptions(isHttpsRequest(await headers())));
   return { ok: true };
 }
