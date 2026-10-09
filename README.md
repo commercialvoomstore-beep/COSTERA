@@ -171,3 +171,20 @@ Séquence ≈ 4,3 s (décor → logo → reflet → slogan → mention), une foi
 session, non bloquante, désactivée si `prefers-reduced-motion`. Teintes
 officielles du splash : violet `#240735` / `#481568`, or `#D4AF37`, champagne
 `#E8CD85`, ivoire `#F8F4EB`.
+
+### Installer le logo officiel PNG (canal fiable)
+
+Les pièces jointes de chat n'arrivant pas jusqu'à l'environnement de travail,
+le canal fiable pour installer **votre fichier exact** est le dépôt Git :
+
+1. Sur GitHub, ouvrez la branche `arena/5bfefc51-costera` → `public/` → *Add file* → *Upload files* ;
+2. Glissez votre PNG **sans aucune modification** et nommez-le exactement `logo-costera.png` ;
+3. Commitez. Au prochain `git pull` (ou à ma prochaine passe), le mécanisme
+   `officialLogoSrc()` détecte le fichier et **tout le site bascule dessus
+   automatiquement** (navigation, splash, connexion, sidebar, pied de page,
+   favicon) — aucune retouche de code nécessaire.
+
+Le fichier `public/logo-costera.svg` reste le substitut vectoriel fidèle
+utilisé en attendant, et `public/logo-costera.png` (dès son dépôt) demeure la
+source officielle intouchée ; toute version dérivée transparente serait un
+fichier séparé, jamais une altération de l'original.

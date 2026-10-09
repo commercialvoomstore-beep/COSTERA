@@ -52,8 +52,14 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
       return;
     }
     setPhase('show');
+    // Sortie normale ≈ 4,3 s.
     const auto = window.setTimeout(() => leave(450), 4300);
-    return () => window.clearTimeout(auto); // uniquement au démontage réel
+    // Filet de sécurité absolu : démontage dur à 6,5 s quoi qu'il arrive.
+    const hard = window.setTimeout(() => setPhase('done'), 6500);
+    return () => {
+      window.clearTimeout(auto);
+      window.clearTimeout(hard);
+    }; // uniquement au démontage réel
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,7 +68,12 @@ export function SplashScreen({ logoSrc }: { logoSrc: string }) {
   const src = logoFailed ? '/logo-costera.svg' : logoSrc;
 
   return (
-    <div className={`splash2 ${phase === 'leave' ? 'splash2-leave' : ''}`} role="presentation">
+    <div
+      className={`splash2 ${phase === 'leave' ? 'splash2-leave' : ''}`}
+      role="presentation"
+      onClick={() => leave(300)}
+      title="Cliquer pour passer l'intro"
+    >
       {/* Décor hôtelier */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/splash-hotel.jpg" alt="" className="splash2-bg" draggable={false} />
