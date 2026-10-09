@@ -56,6 +56,10 @@ export interface Ingredient {
   lossPct: number;
   /** Historique de prix trié par date croissante. */
   history: PriceEntry[];
+  /** Valeurs nutritionnelles pour 100 g d'ingrédient. */
+  nutrition?: { kcal: number; protein: number; carbs: number; fat: number };
+  /** Grammes par unité de base (pièce, botte, boîte, litre…) si différent de 1000. */
+  baseUnitGrams?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -92,6 +96,12 @@ export interface Recipe {
   lines: RecipeLine[];
   steps: string[];
   notes?: string;
+  /** Description complète pour la vitrine publique. */
+  description?: string;
+  /** Temps de cuisson total en minutes. */
+  cookTimeMin?: number;
+  /** Chef auteur de la recette. */
+  chef?: string;
   createdAt: string;
   updatedAt: string;
 }

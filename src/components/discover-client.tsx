@@ -1,11 +1,13 @@
 'use client';
 
-// COSTERA — Vitrine publique « Découvrir les menus » : fond blanc/ivoire,
-// recherche réelle, filtres réels, cartes élégantes au survol premium.
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
-import { Search, UtensilsCrossed } from 'lucide-react';
-import { Badge, EmptyState } from './ui';
+// COSTERA — Vitrine publique « Découvrir » : chaque plat est une carte
+// unique, organisée par catégories. Clic → modale détaillée : description,
+// temps de cuisson, chef (+ ses autres recettes) et carte nutritionnelle
+// calculée automatiquement depuis les ingrédients de la fiche technique.
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, ChefHat, Clock, Flame, Users, X } from 'lucide-react';
+import { fcfa } from '@/lib/format';
+import type { NutritionTotal } from '@/lib/nutrition';
 import type { RecipeCategory } from '@/lib/types';
 
 export interface PublicDish {
@@ -14,135 +16,361 @@ export interface PublicDish {
   category: RecipeCategory;
   price: number;
   image: string;
+  description: string;
+  cookTimeMin?: number;
+  chef?: string;
+  portions: number;
+  nutrition: NutritionTotal;
 }
 
-export interface PublicMenuRow {
-  id: string;
-  name: string;
-  description?: string;
-  sections: { title: string; dishes: PublicDish[] }[];
-  dishCount: number;
-  categories: RecipeCategory[];
-  cover: string;
-}
+const CATEGORY_ORDER: RecipeCategory[] = ['Entrées', 'Plats', 'Accompagnements', 'Desserts', 'Boissons'];
 
-export function DiscoverClient({ menus }: { menus: PublicMenuRow[] }) {
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState<'all' | RecipeCategory>('all');
+export function DiscoverClient({ dishes }: { dishes: PublicDish[] }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = dishes.find((d) => d.id === selectedId) ?? null;
 
-  const availableCategories = useMemo(() => {
-    const set = new Set<RecipeCategory>();
-    menus.forEach((m) => m.categories.forEach((c) => set.add(c)));
-    return [...set];
-  }, [menus]);
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedId(null);
+    };
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [selected]);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return menus
-      .filter((m) => (category === 'all' ? true : m.categories.includes(category)))
-      .filter((m) => {
-        if (!q) return true;
-        const dishNames = m.sections.flatMap((s) => s.dishes.map((d) => d.name)).join(' ');
-        return `${m.name} ${m.description ?? ''} ${dishNames}`.toLowerCase().includes(q);
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-  }, [menus, query, category]);
+  const groups = useMemo(
+    () =>
+      CATEGORY_ORDER.map((cat) => ({ cat, items: dishes.filter((d) => d.category === cat) })).filter(
+        (g) => g.items.length > 0,
+      ),
+    [dishes],
+  );
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-6">
-      {/* Introduction */}
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold-600">Vitrine gastronomique</p>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-royal-800 sm:text-5xl">Découvrir les menus</h1>
-        <p className="mt-4 text-base leading-relaxed text-body/60">
-          Explorez les cartes publiées par les chefs et établissements COSTERA : une gastronomie ivoirienne
-          vivante, chiffrée avec précision et présentée avec élégance.
+    <>
+      {/* En-tête de la vitrine */}
+      <section className="mx-auto max-w-6xl px-5 pb-4 pt-12 text-center sm:pt-16">
+        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-gold-600">La carte COSTERA</p>
+        <h1 className="font-display mt-3 text-3xl font-semibold text-royal-900 sm:text-4xl">
+          Chaque plat, une signature
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-royal-700/80 sm:text-base">
+          Découvrez nos plats un à un : description, temps de cuisson, chef auteur et carte
+          nutritionnelle calculée automatiquement à partir des ingrédients de chaque fiche technique.
         </p>
-        <div className="mx-auto mt-6 h-px w-44 bg-gradient-to-r from-transparent via-gold-500 to-transparent" />
+      </section>
+
+      {/* Catégories → cartes individuelles */}
+      {groups.map((g) => (
+        <section key={g.cat} className="mx-auto max-w-6xl px-5 py-10">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="font-display text-2xl font-semibold text-royal-900">{g.cat}</h2>
+              <div className="mt-2 h-px w-16 bg-gradient-to-r from-gold-500 to-transparent" />
+            </div>
+            <span className="text-xs font-medium uppercase tracking-[0.2em] text-royal-500">
+              {g.items.length} plat{g.items.length > 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {g.items.map((d) => (
+              <DishCard key={d.id} dish={d} onOpen={() => setSelectedId(d.id)} />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {selected && (
+        <DishModal
+          dish={selected}
+          all={dishes}
+          onClose={() => setSelectedId(null)}
+          onOpen={(id) => setSelectedId(id)}
+        />
+      )}
+
+      <div className="h-16" />
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Carte plat                                                          */
+/* ------------------------------------------------------------------ */
+function DishCard({ dish, onOpen }: { dish: PublicDish; onOpen: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="dish-card group relative flex flex-col overflow-hidden rounded-2xl border border-royal-100 bg-white text-left shadow-card transition-all duration-500 ease-premium hover:-translate-y-2 hover:border-gold-300 hover:shadow-pop focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold-500"
+      aria-label={`Voir le détail de ${dish.name}`}
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-royal-50">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={dish.image}
+          alt={dish.name}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-700 ease-premium group-hover:scale-[1.07]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-royal-950/45 via-transparent to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-90" />
+        <span className="absolute left-4 top-4 rounded-full bg-royal-900/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-300 backdrop-blur-sm">
+          {dish.category}
+        </span>
+        <span className="absolute bottom-3 right-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-royal-800 backdrop-blur-sm">
+          <Flame size={12} className="text-gold-600" />
+          {dish.nutrition.kcal} kcal
+        </span>
       </div>
 
-      {/* Recherche + filtres */}
-      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-body/35" />
-          <input
-            className="input rounded-full py-2.5 pl-10"
-            placeholder="Rechercher un menu, un plat… (ex. garba, kedjenou)"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Rechercher un menu"
-          />
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-lg font-semibold leading-snug text-royal-900 transition-colors duration-300 group-hover:text-royal-700">
+          {dish.name}
+        </h3>
+        <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-royal-600/90">{dish.description}</p>
+        <div className="mt-4 flex items-center justify-between border-t border-royal-100/80 pt-3.5">
+          <span className="text-sm font-bold tracking-wide text-gold-700">{fcfa(dish.price)}</span>
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-royal-500">
+            <Clock size={13} className="text-gold-600" />
+            {dish.cookTimeMin ? `${dish.cookTimeMin} min` : '—'}
+          </span>
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrer par catégorie">
+      </div>
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Modale détail                                                       */
+/* ------------------------------------------------------------------ */
+function DishModal({
+  dish,
+  all,
+  onClose,
+  onOpen,
+}: {
+  dish: PublicDish;
+  all: PublicDish[];
+  onClose: () => void;
+  onOpen: (id: string) => void;
+}) {
+  const [chefView, setChefView] = useState(false);
+  const others = useMemo(
+    () => all.filter((d) => d.chef && d.chef === dish.chef && d.id !== dish.id),
+    [all, dish],
+  );
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-royal-950/70 p-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={dish.name}
+    >
+      <div
+        className="dish-modal relative grid max-h-[90vh] w-full max-w-4xl grid-cols-1 overflow-hidden rounded-3xl bg-white shadow-2xl md:grid-cols-[0.9fr_1.1fr]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer"
+          className="absolute right-4 top-4 z-10 rounded-full bg-royal-950/55 p-2 text-ivory backdrop-blur-sm transition-all duration-300 hover:rotate-90 hover:bg-royal-900 hover:text-gold-300"
+        >
+          <X size={18} />
+        </button>
+
+        {/* Visuel */}
+        <div className="relative h-56 md:h-full">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={dish.image} alt={dish.name} className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-royal-950/60 to-transparent" />
+          <span className="absolute left-5 top-5 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-royal-800">
+            {dish.category}
+          </span>
+          <span className="absolute bottom-5 left-5 text-xl font-bold tracking-wide text-gold-300 drop-shadow">
+            {fcfa(dish.price)}
+          </span>
+        </div>
+
+        {/* Contenu */}
+        <div className="overflow-y-auto p-6 sm:p-8">
+          {chefView ? (
+            <ChefPanel dish={dish} others={others} onBack={() => setChefView(false)} onOpen={onOpen} />
+          ) : (
+            <>
+              <h2 className="font-display pr-8 text-2xl font-semibold leading-tight text-royal-900">{dish.name}</h2>
+
+              <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium text-royal-700">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-royal-50 px-3 py-1.5">
+                  <Clock size={13} className="text-gold-600" />
+                  Cuisson {dish.cookTimeMin ? `${dish.cookTimeMin} min` : '—'}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-royal-50 px-3 py-1.5">
+                  <Users size={13} className="text-gold-600" />
+                  {dish.portions} portion{dish.portions > 1 ? 's' : ''}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-royal-50 px-3 py-1.5">
+                  <Flame size={13} className="text-gold-600" />
+                  {dish.nutrition.kcal} kcal / portion
+                </span>
+              </div>
+
+              <p className="mt-5 text-sm leading-relaxed text-royal-700">{dish.description}</p>
+
+              {/* Chef */}
+              {dish.chef && (
+                <div className="mt-6 flex items-center justify-between gap-3 rounded-2xl border border-gold-200 bg-gradient-to-r from-gold-50 to-white px-4 py-3.5">
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full bg-royal-900 p-2.5 text-gold-300">
+                      <ChefHat size={16} />
+                    </span>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-royal-500">Réalisé par</p>
+                      <p className="text-sm font-semibold text-royal-900">{dish.chef}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setChefView(true)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-royal-200 px-3.5 py-2 text-xs font-semibold text-royal-800 transition-all duration-300 hover:border-gold-400 hover:bg-gold-50 hover:text-gold-700"
+                  >
+                    Voir ses autres recettes
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
+              )}
+
+              {/* Carte nutritionnelle */}
+              <NutritionPanel nutrition={dish.nutrition} />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Panneau « autres recettes du chef »                                 */
+/* ------------------------------------------------------------------ */
+function ChefPanel({
+  dish,
+  others,
+  onBack,
+  onOpen,
+}: {
+  dish: PublicDish;
+  others: PublicDish[];
+  onBack: () => void;
+  onOpen: (id: string) => void;
+}) {
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onBack}
+        className="text-xs font-semibold uppercase tracking-[0.2em] text-royal-500 transition-colors hover:text-gold-700"
+      >
+        ← Retour au plat
+      </button>
+      <div className="mt-4 flex items-center gap-3">
+        <span className="rounded-full bg-royal-900 p-3 text-gold-300">
+          <ChefHat size={20} />
+        </span>
+        <div>
+          <h2 className="font-display text-xl font-semibold text-royal-900">{dish.chef}</h2>
+          <p className="text-xs text-royal-500">
+            {others.length} autre{others.length > 1 ? 's' : ''} recette{others.length > 1 ? 's' : ''} publiée
+            {others.length > 1 ? 's' : ''}
+          </p>
+        </div>
+      </div>
+      <div className="mt-6 space-y-3">
+        {others.length === 0 && (
+          <p className="text-sm text-royal-600">Aucune autre recette publiée pour ce chef pour le moment.</p>
+        )}
+        {others.map((o) => (
           <button
-            onClick={() => setCategory('all')}
-            className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-              category === 'all' ? 'border-royal-700 bg-royal-700 text-white shadow-sm' : 'border-linec bg-white text-body/60 hover:border-gold-500/70 hover:text-royal-700'
-            }`}
+            key={o.id}
+            type="button"
+            onClick={() => onOpen(o.id)}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-royal-100 bg-white p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-300 hover:shadow-card"
           >
-            Tous
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={o.image}
+              alt=""
+              className="h-14 w-14 shrink-0 rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-royal-900">{o.name}</p>
+              <p className="text-xs text-royal-500">
+                {o.category} · {fcfa(o.price)}
+              </p>
+            </div>
+            <ArrowRight size={15} className="shrink-0 text-gold-600 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
-          {availableCategories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className={`rounded-full border px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                category === c ? 'border-royal-700 bg-royal-700 text-white shadow-sm' : 'border-linec bg-white text-body/60 hover:border-gold-500/70 hover:text-royal-700'
-              }`}
-            >
-              {c}
-            </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Carte nutritionnelle                                                */
+/* ------------------------------------------------------------------ */
+function NutritionPanel({ nutrition }: { nutrition: NutritionTotal }) {
+  const pKcal = nutrition.protein * 4;
+  const cKcal = nutrition.carbs * 4;
+  const fKcal = nutrition.fat * 9;
+  const total = Math.max(1, pKcal + cKcal + fKcal);
+  const macros = [
+    { label: 'Protéines', grams: nutrition.protein, kcal: pKcal, bar: 'bg-royal-600' },
+    { label: 'Glucides', grams: nutrition.carbs, kcal: cKcal, bar: 'bg-gold-500' },
+    { label: 'Lipides', grams: nutrition.fat, kcal: fKcal, bar: 'bg-royal-300' },
+  ];
+  return (
+    <div className="mt-6 rounded-2xl border border-royal-100 bg-ivory/60 p-5">
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-royal-700">
+          Carte nutritionnelle
+        </h3>
+        <span className="text-[11px] text-royal-500">par portion</span>
+      </div>
+      <div className="mt-4 flex items-center gap-5">
+        <div className="text-center">
+          <p className="font-display text-3xl font-semibold text-royal-900">{nutrition.kcal}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-gold-700">kcal</p>
+        </div>
+        <div className="flex-1 space-y-2.5">
+          {macros.map((m) => (
+            <div key={m.label}>
+              <div className="flex justify-between text-[11px] font-medium text-royal-700">
+                <span>{m.label}</span>
+                <span>
+                  {m.grams} g · {Math.round((m.kcal / total) * 100)} %
+                </span>
+              </div>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-royal-100">
+                <div
+                  className={`h-full rounded-full ${m.bar} transition-all duration-700`}
+                  style={{ width: `${Math.max(4, Math.round((m.kcal / total) * 100))}%` }}
+                />
+              </div>
+            </div>
           ))}
         </div>
       </div>
-
-      {/* Grille */}
-      <div className="mt-10">
-        {filtered.length === 0 ? (
-          <EmptyState
-            icon={<UtensilsCrossed className="h-10 w-10" />}
-            title="Aucun menu ne correspond à votre recherche"
-            text="Essayez un autre terme ou retirez un filtre : la vitrine s’enrichit au fil des publications des chefs."
-            action={
-              <button onClick={() => { setQuery(''); setCategory('all'); }} className="btn-ghost">
-                Réinitialiser les filtres
-              </button>
-            }
-          />
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((m) => (
-              <article key={m.id} className="card card-hover group flex flex-col overflow-hidden">
-                <Link href={`/decouvrir/${m.id}`} className="flex h-full flex-col" aria-label={`Voir le menu ${m.name}`}>
-                  <div className="img-zoom relative aspect-[16/10]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={m.cover} alt={`Plat du menu ${m.name}`} loading="lazy" className="h-full w-full object-cover" />
-                    <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-royal-800 shadow-sm backdrop-blur">
-                      {m.dishCount} plat{m.dishCount > 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <h2 className="font-display text-lg font-bold text-body transition-colors duration-200 group-hover:text-royal-700">{m.name}</h2>
-                    {m.description ? <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-body/55">{m.description}</p> : null}
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {m.categories.slice(0, 3).map((c) => (
-                        <Badge key={c} tone="neutral">{c}</Badge>
-                      ))}
-                    </div>
-                    <div className="mt-5 flex items-center justify-between border-t border-linec pt-4">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-body/45">{m.sections.length} section{m.sections.length > 1 ? 's' : ''}</span>
-                      <span className="inline-flex items-center gap-1 text-sm font-bold text-royal-700 transition-all duration-200 group-hover:gap-2 group-hover:text-royal-800">
-                        Voir le menu
-                        <span aria-hidden="true">→</span>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </article>
-            ))}
-          </div>
-        )}
-      </div>
+      <p className="mt-4 text-[10px] leading-relaxed text-royal-500">
+        Valeurs estimées, calculées automatiquement à partir des ingrédients de la fiche technique
+        ({nutrition.gramsPerPortion} g d’ingrédients par portion).
+      </p>
     </div>
   );
 }
