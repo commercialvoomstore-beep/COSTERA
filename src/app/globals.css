@@ -417,3 +417,120 @@
     transform: none;
   }
 }
+
+/* ============================================================
+   HERO CAROUSEL — fondu enchaîné + zoom avant cinématographique
+   Cycle 5 s · fondu 1.4 s · zoom continu 7 s (dérive alternée)
+   ============================================================ */
+.hero-carousel {
+  @apply relative h-[220px] w-full overflow-hidden bg-royal-950 lg:h-full;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s ease-in-out;
+  will-change: opacity;
+}
+.hero-slide-active {
+  opacity: 1;
+}
+/* Overscan 2 % : aucun bord blanc pendant la dérive */
+.hero-slide picture,
+.hero-slide img {
+  position: absolute;
+  inset: -2%;
+  width: 104%;
+  height: 104%;
+  object-fit: cover;
+  image-rendering: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.kb-a {
+  animation: hero-zoom-a 7s linear both;
+}
+.kb-b {
+  animation: hero-zoom-b 7s linear both;
+}
+@keyframes hero-zoom-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.14);
+  }
+}
+@keyframes hero-zoom-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5%, 1%, 0) scale(1.14);
+  }
+}
+/* Pause (survol / onglet masqué) : le zoom se fige, la barre aussi (rAF) */
+.hero-carousel.is-paused .hero-slide img {
+  animation-play-state: paused;
+}
+/* Voile violet identité + dégradé sombre bas rgba(20,10,40,.78) */
+.hero-veil {
+  @apply pointer-events-none absolute inset-0;
+  background:
+    linear-gradient(to top, rgba(20, 10, 40, 0.78), transparent 55%),
+    linear-gradient(rgba(45, 27, 105, 0.16), rgba(45, 27, 105, 0.16));
+}
+/* Slogan synchronisé : fondu + glissement 14 px, décalé de 0.3 s */
+.hero-copy {
+  animation: hero-slogan 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+@keyframes hero-slogan {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Indicateurs : pastille active = barre dorée 28×3 remplie en 5 s */
+.hero-dot-track {
+  display: inline-block;
+  width: 28px;
+  height: 3px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.25);
+}
+.hero-dot-fill {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #d4a94a;
+}
+.hero-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.4);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.hero-dot:hover {
+  background: rgb(255 255 255 / 0.75);
+  transform: scale(1.25);
+}
+/* Accessibilité : mouvement réduit → fondu simple 0.8 s, sans zoom */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition-duration: 0.8s;
+  }
+  .hero-slide img {
+    animation: none !important;
+  }
+  .hero-copy {
+    animation-duration: 0.8s;
+    animation-delay: 0s;
+  }
+}
