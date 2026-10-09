@@ -326,7 +326,11 @@
 /* ============================================================
    PAGES CONNEXION / INSCRIPTION — split 58/42, carte blanche,
    violet #2D1B69→#5B2D9E, or #B8892B→#D4A94A, fond crème #FAF8F5
+   NB : bloc encapsulé dans @layer components pour que les utilitaires
+   Tailwind (pl-10, pr-11…) restent prioritaires — sans cela le padding
+   hors-layer écrasait pl-10 et le texte tapé passait SOUS l'icône.
    ============================================================ */
+@layer components {
 .auth-card {
   border-radius: 18px;
   background: #fff;
@@ -416,6 +420,7 @@
     opacity: 1;
     transform: none;
   }
+}
 }
 
 /* ============================================================

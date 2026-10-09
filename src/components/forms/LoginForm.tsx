@@ -8,12 +8,12 @@ import type { Role } from '@/lib/types';
 import { loginAction } from '@/server/actions/auth';
 import { ErrorNote } from '../ui';
 
-export function LoginForm({ demoAccounts }: { demoAccounts: { name: string; email: string; role: Role }[] }) {
+export function LoginForm({ demoAccounts, initialError = null }: { demoAccounts: { name: string; email: string; role: Role }[]; initialError?: string | null }) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const [busy, setBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
@@ -42,7 +42,9 @@ export function LoginForm({ demoAccounts }: { demoAccounts: { name: string; emai
 
   return (
     <div className="space-y-5">
-      <form onSubmit={submit} className="space-y-4" noValidate={false} aria-busy={busy}>
+      {/* action native = repli sans JS (/api/auth/login) ; avec JS,
+          onSubmit prend la main (preventDefault) et appelle loginAction. */}
+      <form onSubmit={submit} action="/api/auth/login" method="post" className="space-y-4" noValidate={false} aria-busy={busy}>
         <div>
           <label htmlFor="login-email" className="auth-label">
             Adresse e-mail
@@ -51,6 +53,7 @@ export function LoginForm({ demoAccounts }: { demoAccounts: { name: string; emai
             <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
             <input
               id="login-email"
+              name="email"
               type="email"
               className="auth-input pl-10"
               placeholder="vous@restaurant.ci"
@@ -69,6 +72,7 @@ export function LoginForm({ demoAccounts }: { demoAccounts: { name: string; emai
             <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
             <input
               id="login-password"
+              name="password"
               type={showPwd ? 'text' : 'password'}
               className="auth-input pl-10 pr-11"
               placeholder="••••••••"

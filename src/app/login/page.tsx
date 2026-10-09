@@ -9,9 +9,21 @@ import { getDB } from '@/server/db';
 
 export const metadata: Metadata = { title: 'Connexion' };
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const userId = await getSessionUserId();
   if (userId && getDB().users.some((u) => u.id === userId)) redirect('/dashboard');
+
+  // Erreur renvoyée par le repli sans JS (/api/auth/login) : affichée au
+  // rendu serveur, donc visible même si JavaScript est indisponible.
+  const params = await searchParams;
+  const initialError =
+    params.erreur === 'identifiants'
+      ? 'Identifiants incorrects. Vérifiez votre e-mail et votre mot de passe.'
+      : null;
 
   const demoAccounts = getDB()
     .users.map((u) => ({ name: u.name, email: u.email, role: u.role }))
@@ -35,7 +47,7 @@ export default async function LoginPage() {
           <p className="mb-7 mt-1.5 text-center text-sm text-stone-500">
             Accédez à votre espace de gestion culinaire.
           </p>
-          <LoginForm demoAccounts={demoAccounts} />
+          <LoginForm demoAccounts={demoAccounts} initialError={initialError} />
           <p className="mt-6 text-center text-sm text-stone-500">
             Pas encore de compte ?{' '}
             <Link href="/signup" className="font-semibold text-royal-700 underline-offset-4 transition-colors hover:text-gold-700 hover:underline">
