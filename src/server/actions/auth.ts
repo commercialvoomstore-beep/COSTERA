@@ -4,11 +4,14 @@ import { cookies } from 'next/headers';
 import { SESSION_COOKIE, encodeSession, hashPassword, verifyPassword } from '@/lib/auth';
 import { getDB, newId, nowISO, saveDB } from '@/server/db';
 
-export async function loginAction(email: string, password: string): Promise<{ ok: boolean; error?: string }> {
-  const cleanEmail = email.trim().toLowerCase();
-  if (!cleanEmail || !password) return { ok: false, error: 'Renseignez votre e-mail et votre mot de passe.' };
+export async function loginAction(email: unknown, password: unknown): Promise<{ ok: boolean; error?: string }> {
+  // Entrées coercées : un corps de requête malformed (proxy, extension,
+  // client bogué) ne doit JAMAIS produire une 500 ni une stack exposée.
+  const cleanEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const cleanPassword = typeof password === 'string' ? password : '';
+  if (!cleanEmail || !cleanPassword) return { ok: false, error: 'Renseignez votre e-mail et votre mot de passe.' };
   const user = getDB().users.find((u) => u.email.toLowerCase() === cleanEmail);
-  if (!user || !verifyPassword(password, user.passwordHash)) {
+  if (!user || !verifyPassword(cleanPassword, user.passwordHash)) {
     return { ok: false, error: 'Identifiants incorrects. Vérifiez votre e-mail et votre mot de passe.' };
   }
   const store = await cookies();
@@ -35,12 +38,15 @@ export async function registerAction(input: {
   profile: 'utilisateur' | 'chef';
   password: string;
 }): Promise<{ ok: boolean; error?: string }> {
-  const firstName = input.firstName.trim();
-  const lastName = input.lastName.trim();
-  const email = input.email.trim().toLowerCase();
+  // Entrées coercées : aucun champ manquant/null ne doit lever d'exception.
+  const safe = input && typeof input === 'object' ? input : ({} as typeof input);
+  const firstName = typeof safe.firstName === 'string' ? safe.firstName.trim() : '';
+  const lastName = typeof safe.lastName === 'string' ? safe.lastName.trim() : '';
+  const email = typeof safe.email === 'string' ? safe.email.trim().toLowerCase() : '';
+  const password = typeof safe.password === 'string' ? safe.password : '';
   if (!firstName || !lastName) return { ok: false, error: 'Renseignez votre prénom et votre nom.' };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'Adresse e-mail invalide.' };
-  if (!input.password || input.password.length < 8) {
+  if (!password || password.length < 8) {
     return { ok: false, error: 'Le mot de passe doit contenir au moins 8 caractères.' };
   }
   const db = getDB();
@@ -52,8 +58,8 @@ export async function registerAction(input: {
     id,
     name: `${firstName} ${lastName}`,
     email,
-    role: input.profile === 'chef' ? 'chef' : 'gestionnaire',
-    passwordHash: hashPassword(input.password),
+    role: safe.profile === 'chef' ? 'chef' : 'gestionnaire',
+    passwordHash: hashPassword(password),
     createdAt: nowISO(),
   });
   saveDB(db);

@@ -50,6 +50,18 @@ const empty = await loginAction('  ', '');
 check('champs vides → ok:false + message', empty.ok === false && !!empty.error);
 check('aucun cookie créé après trois échecs', globalThis.__TEST_COOKIE_SET === undefined);
 
+console.log('== 2bis. Corps de requête malformed : jamais d’exception ==');
+const nul = await loginAction(null, null);
+check('loginAction(null, null) → ok:false + message', nul.ok === false && !!nul.error);
+const weird = await loginAction(12345, { a: 1 });
+check('loginAction(12345, {a:1}) → ok:false + message', weird.ok === false && !!weird.error);
+const arr = await loginAction(['a@b.ci'], ['x']);
+check('loginAction(tableaux) → ok:false + message', arr.ok === false && !!arr.error);
+const regNull = await registerAction(null);
+check('registerAction(null) → ok:false + message', regNull.ok === false && !!regNull.error);
+const regPartial = await registerAction({ firstName: 'Ana' });
+check('registerAction(partiel) → ok:false + message', regPartial.ok === false && !!regPartial.error);
+
 console.log('== 3. Session : signature, expiration, altération ==');
 const token = encodeSession('usr-yao');
 check('decodeSession(token) = usr-yao', decodeSession(token) === 'usr-yao');
